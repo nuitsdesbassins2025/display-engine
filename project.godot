@@ -11,8 +11,8 @@ config_version=5
 [application]
 
 config/name="WebSocket Demo"
-run/main_scene="uid://bieapeupmqtij"
-config/features=PackedStringArray("4.4")
+run/main_scene="res://main_scene.tscn"
+config/features=PackedStringArray("4.2")
 
 [gd_project format=4]
 
