@@ -50,16 +50,23 @@ func turn_to(new_angle: float):
 
 func do_action01():
 	# Animation pour faire grandir le joueur puis revenir à la taille normale
-	var anim_length = 1.0  # Durée totale de l'animation
-	var animation = Animation.new()
-	animation.length = anim_length
-
-	animation.track_insert_key(0, 0, Vector2(size, size))
-	animation.track_insert_key(0, anim_length * 0.5, Vector2(size * 1.3, size * 1.3))
-	animation.track_insert_key(0, anim_length, Vector2(size, size))
-
-	animation_player.add_animation("grow_shrink", animation)
-	animation_player.play("grow_shrink")
+	#var anim_length = 1.0  # Durée totale de l'animation
+	#var animation = Animation.new()
+	#animation.length = anim_length
+#
+	var color = Color(0,0,0)
+	var sprite = get_child(0)
+	sprite.modulate = color
+func do_action_nuits_des_bassins():
+	var color2 = Color(250,0,0)
+	var sprite = get_child(0)
+	sprite.modulate = color2
+	#animation.track_insert_key(0, 0, Vector2(size, size))
+	#animation.track_insert_key(0, anim_length * 0.5, Vector2(size * 1.3, size * 1.3))
+	#animation.track_insert_key(0, anim_length, Vector2(size, size))
+#
+	#animation_player.add_animation("grow_shrink", animation)
+	#animation_player.play("grow_shrink")
 
 # Mettre à jour la position directement (sans animation)
 func update_position(x, y):
