@@ -14,6 +14,10 @@ config/name="WebSocket Demo"
 run/main_scene="res://main_scene.tscn"
 config/features=PackedStringArray("4.4")
 
+[dotnet]
+
+project/assembly_name="WebSocket Demo"
+
 [gd_project format=4]
 
 config_version=4
