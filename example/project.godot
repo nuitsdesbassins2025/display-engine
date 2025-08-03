@@ -10,15 +10,11 @@ config_version=5
 
 [application]
 
-config/name="Dopamine"
-run/main_scene="uid://df1x7k5g75tum"
-config/features=PackedStringArray("4.2", "Mobile")
+config/name="example"
+run/main_scene="res://screen.tscn"
+config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://icon.svg"
 
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/godot-socketio/plugin.cfg")
-
-[rendering]
-
-renderer/rendering_method="mobile"
