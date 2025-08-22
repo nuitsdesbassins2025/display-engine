@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://dr42r1hkdqa1n"]
 
-[ext_resource type="Script" path="res://entities/player/player.gd" id="1_symyc"]
+[ext_resource type="Script" uid="uid://sbmkwj6bxagx" path="res://entities/player/player.gd" id="1_symyc"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_symyc"]
 

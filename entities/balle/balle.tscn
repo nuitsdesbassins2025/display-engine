@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://df1x7k5g75tum"]
 
-[ext_resource type="Script" path="res://entities/balle/balle.gd" id="1_2ir51"]
+[ext_resource type="Script" uid="uid://cywhw6oogt41j" path="res://entities/balle/balle.gd" id="1_2ir51"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_2ir51"]
 
