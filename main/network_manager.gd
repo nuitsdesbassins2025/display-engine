@@ -11,6 +11,8 @@ signal player_disconnected(player_id)
 signal position_received(player_id, position)
 signal action_received(player_id, action, timestamp)
 
+signal move_player(player_id, target_position)
+
 # Configuration
 var websocket_url = "http://localhost:5000"
 var update_interval = 200 # ms entre chaque mise à jour
@@ -27,6 +29,12 @@ var is_networked_game = true
 var client: SocketIO
 
 
+# Variables pour le debug
+var debug_timer: Timer
+var is_debug_active: bool = false
+
+
+
 func _ready():
 	client = SocketIO.new()
 	add_child(client)
@@ -34,23 +42,96 @@ func _ready():
 	client.socket_connected.connect(_on_socket_connected)
 	client.event_received.connect(_on_event_received)
 	client.connect_socket()
+	setup_debug_timer()
 
 
 
+func setup_debug_timer():
+		# Crée le timer pour le debug
+	debug_timer = Timer.new()
+	debug_timer.wait_time = 1.0  # 1 seconde
+	debug_timer.one_shot = false
+	debug_timer.timeout.connect(_on_debug_timer_timeout)
+	add_child(debug_timer)
+
+	# Démarre automatiquement le debug (optionnel)
+	start_debug_mode()
 	#setup_websocket()
+	# Fonction pour démarrer le mode debug
+func start_debug_mode():
+	if not is_debug_active:
+		is_debug_active = true
+		debug_timer.start()
+		print("Debug mode STARTED - Sending random signals every second")
+
+# Fonction pour arrêter le mode debug
+func stop_debug_mode():
+	if is_debug_active:
+		is_debug_active = false
+		debug_timer.stop()
+		print("Debug mode STOPPED")
+
+# Fonction appelée à chaque tick du timer
+func _on_debug_timer_timeout():
+	if is_debug_active:
+		_send_random_move_signal()
+		
+# Fonction pour envoyer un signal aléatoire
+func _send_random_move_signal():
+	var random_id = randi() % 5 + 1  # IDs de 1 à 5
+	var random_x = randf() * 1000.0  # X entre 0 et 1000
+	var random_y = randf() * 600.0   # Y entre 0 et 600
 	
+	var random_position = Vector2(random_x, random_y)
+
+	emit_move_player_signal(random_id, random_position)
+
+# Fonction pour émettre le signal (publique)
+func emit_move_player_signal(id: int, target_position: Vector2):
+	move_player.emit(id, target_position)
+	print("DEBUG - Signal emitted: move_player(", id, ", ", target_position,")")
+
+# Fonction pour tester manuellement (utile pour le debug)
+func test_specific_move(id: int, target_position: Vector2):
+	emit_move_player_signal(id, target_position)
+
+
+	
+		
 func _on_socket_connected(_namespace) -> void:
 	client.emit("get_user_data", { "id": "id-godot" })
 	print("Connecté, envoi get_user_data")
 
 func _on_event_received(event: String, data: Variant, ns: String) -> void:
-	print("Event", event, "avec", data)
+	print("Event : ", event, " datas : ", data)
 	if event == "user_data":
 		# OK, tu es identifié
 		pass
 	if event == "action_triggered_by":
 		print("Action déclenchée par serveur local 👍 :", data)
 		# fais ton traitement
+		
+		
+		
+	if event == "request_new_player":
+		print("new player requested :", data)
+		pass
+	
+		
+	if event == "admin_game_setting":
+		
+		if data[0].action == "set_scene":
+			print("changmeent de scene demandé")
+			
+			if data[0].value =="dogeball":
+				print("on change de scene en dogeball")
+				get_tree().change_scene_to_file("res://Scenes/dogeball.tscn")
+			else :
+				print("scene non configurée")
+
+		
+		
+		
 	
 
 func _process(delta):

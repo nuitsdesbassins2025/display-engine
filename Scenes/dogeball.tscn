@@ -1,0 +1,35 @@
+[gd_scene load_steps=7 format=3 uid="uid://dkusqq8p14qw7"]
+
+[ext_resource type="Script" path="res://Scenes/dogeball.gd" id="1_12k6n"]
+[ext_resource type="Script" path="res://Scenes/grille.gd" id="1_t338q"]
+[ext_resource type="PackedScene" uid="uid://dr42r1hkdqa1n" path="res://entities/player/player.tscn" id="2_b65vx"]
+[ext_resource type="Shader" path="res://Scenes/grid_shader.gdshader" id="2_u2e2k"]
+[ext_resource type="Script" path="res://Scenes/color_rect.gd" id="3_mfuhc"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mfuhc"]
+shader = ExtResource("2_u2e2k")
+shader_parameter/grid_color = Color(0.3, 0.3, 0.3, 0.5)
+shader_parameter/background_color = Color(0.1, 0.1, 0.1, 1)
+shader_parameter/cell_size = 50.0
+shader_parameter/line_width = 1.0
+
+[node name="Dogeball" type="Node2D"]
+script = ExtResource("1_12k6n")
+player_scene = ExtResource("2_b65vx")
+cell_size = 100
+grid_color = Color(1, 1, 1, 1)
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+visible = false
+position = Vector2(364, 18)
+color = Color(0.482353, 1, 1, 1)
+polygon = PackedVector2Array(102, 31, 77, 118, 298, 184, 308, 88, 207, 85)
+script = ExtResource("1_t338q")
+grid_color = Color(0.746916, 0.247448, 0.517901, 1)
+
+[node name="ColorRect" type="ColorRect" parent="."]
+visible = false
+material = SubResource("ShaderMaterial_mfuhc")
+offset_right = 224.0
+offset_bottom = 269.0
+script = ExtResource("3_mfuhc")

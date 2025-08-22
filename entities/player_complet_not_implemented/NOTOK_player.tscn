@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cul8m4yf7luv6"]
+
+[ext_resource type="Script" path="res://entities/player_complet_not_implemented/NOTOK_player.gd" id="1_mgx1l"]
+
+[node name="Player" type="CharacterBody2D"]
+script = ExtResource("1_mgx1l")

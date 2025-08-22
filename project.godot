@@ -15,6 +15,10 @@ run/main_scene="uid://df1x7k5g75tum"
 config/features=PackedStringArray("4.2", "Mobile")
 config/icon="res://icon.svg"
 
+[autoload]
+
+NetworkManager="*res://main/network_manager.gd"
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/godot-socketio/plugin.cfg")

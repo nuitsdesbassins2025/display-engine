@@ -1,143 +1,232 @@
 extends CharacterBody2D
-class_name NetworkPlayer
+class_name Player
 
-## Joueur avec support réseau
-## - Gère le mouvement local et distant
-## - Traite les actions avec compensation de latence
-## - Gère les collisions
 
-signal fired_bullet(position, direction)
+@export var player_id: int = -1:
+	set(value):
+		player_id = value
+		# Mettez à jour ici ce qui dépend de l'ID
+		_update_player_identity()
+		
+		
+# Propriétés du joueur
+var gd_id: String = ""
+var client_id: String = ""
+var tracking_id: String = ""
 
-@export var is_local_player := false
-@export var move_speed := 300.0
-@export var interpolation_speed := 5.0
+var is_tracked_player: bool = false
+var is_active: bool = true
 
-var target_position := Vector2.ZERO
-var last_direction := Vector2.RIGHT
-var health := 100
+var player_color: Color = Color.WHITE
+var health: int = 10
+var ammo: int = 5
 
-# Références
-@onready var sprite := $Sprite2D
-@onready var gun := $GunPosition
-@onready var animation_player := $AnimationPlayer
+# Timer pour l'inactivité
+var inactivity_timer: Timer
+var last_position_update: float = 0.0
+
+# Références aux nodes
+@onready var collision_shape: CollisionShape2D = $CollisionShape2D
+@onready var sprite: Sprite2D = $Sprite2D
+
+# Dictionnaire des actions disponibles
+var actions_map: Dictionary = {}
 
 func _ready():
-	if is_local_player:
-		target_position = position
-	
-	# Connexion au NetworkManager
-	NetworkManager.position_received.connect(_on_position_received)
-	NetworkManager.action_received.connect(_on_action_received)
+	# Configuration initiale
+	setup_player()
+	#setup_signals()
+	setup_inactivity_timer()
+	setup_actions_map()
 
-func _physics_process(delta):
-	if is_local_player:
-		process_local_input()
+func setup_player():
+	
+	pass
+	# Configuration du sprite en cercle
+	#var circle_texture = create_circle_texture()
+	#sprite.texture = circle_texture
+	#sprite.modulate = player_color
+	#
+	## Configuration de la collision
+	#var circle_shape = CircleShape2D.new()
+	#circle_shape.radius = 10
+	#collision_shape.shape = circle_shape
+	#
+	
+func _update_player_identity():
+	print("Player ID set to: ", player_id)
+	# Ajoutez ici la logique spécifique à l'ID
+	# Par exemple : changer la couleur, le nom, etc.
+	
+	
+func setup_signals():
+	
+	pass
+	# Connexion aux signaux externes
+	#if NetworkManager.has_signal("player_change_position"):
+		#NetworkManager.player_change_position.connect(_on_player_change_position)
+	#
+	#if NetworkManager.has_signal("player_do_action"):
+		#NetworkManager.player_do_action.connect(_on_player_do_action)
+	#
+	#if NetworkManager.has_signal("player_set_color"):
+		#NetworkManager.player_set_color.connect(_on_player_set_color)
+	#
+	#if NetworkManager.has_signal("player_sync_tracking_client"):
+		#NetworkManager.player_sync_tracking_client.connect(_on_player_sync_tracking_client)
+#
+
+
+func setup_inactivity_timer():
+	inactivity_timer = Timer.new()
+	add_child(inactivity_timer)
+	inactivity_timer.wait_time = 10.0
+	inactivity_timer.one_shot = false
+	inactivity_timer.timeout.connect(_on_inactivity_timeout)
+	inactivity_timer.start()
+
+func setup_actions_map():
+	# Mapping des actions disponibles
+	actions_map = {
+		"shoot": _do_shoot,
+		"reload": _do_reload,
+		"heal": _do_heal,
+		"move": _do_move
+	}
+
+#func create_circle_texture() -> Texture2D:
+	## Création d'une texture de cercle programmatiquement
+	#var image = Image.create(20, 20, false, Image.FORMAT_RGBA8)
+	#image.fill(Color.TRANSPARENT)
+	#
+	## Dessiner un cercle (simplifié)
+	#var center = Vector2(10, 10)
+	#for x in range(20):
+		#for y in range(20):
+			#if Vector2(x, y).distance_to(center) <= 8:
+				#image.set_pixel(x, y, Color.WHITE)
+	#
+	#return ImageTexture.create_from_image(image)
+
+## SIGNAL HANDLERS
+#func _on_player_change_position( new_position: Vector2):
+	##if player_id == gd_id:
+	#move_to_position(new_position)
+#
+#func _on_player_do_action(player_id: String, action: String, action_datas: Dictionary):
+	#if player_id == gd_id and actions_map.has(action):
+		#actions_map[action].call(action_datas)
+#
+#func _on_player_set_color(player_id: String, color: Color):
+	#if player_id == gd_id:
+		#set_player_color(color)
+#
+#func _on_player_sync_tracking_client(player_id: String, track_id: String, cl_id: String, pos: Vector2):
+	#if player_id == gd_id:
+		#sync_tracking_client(track_id, cl_id, pos)
+
+func _on_inactivity_timeout():
+	check_inactivity()
+
+# FONCTIONS PRINCIPALES
+
+var current_move_tween: Tween = null
+
+
+func move_to_position(target_position: Vector2):
+	#On met à jours pour l'inactivité
+	last_position_update = Time.get_unix_time_from_system()
+	
+	if not is_active:
+		set_active(true)
+
+	# Si très proche, téléportation immédiate
+	if global_position.distance_to(target_position) < 10.0:
+		print("tp")
+		global_position = target_position
+		return
+
+	# Arrêter l'animation précédente
+	if current_move_tween:
+		current_move_tween.kill()
+
+	# Créer une nouvelle animation
+	current_move_tween = create_tween()
+
+	# Durée dynamique basée sur la distance
+	var distance = global_position.distance_to(target_position)
+	var duration = clamp(distance / 400.0, 0.05, 0.3)
+
+	current_move_tween.tween_property(self, "global_position", target_position, duration)
+	current_move_tween.finished.connect(_cleanup_tween)
+
+func _cleanup_tween():
+	current_move_tween = null
+
+func set_active(active: bool):
+	is_active = active
+	visible = active
+	set_physics_process(active)  # Désactiver le processing si inactif
+
+
+func set_player_color(color: Color):
+	player_color = color
+	sprite.modulate = player_color
+
+func sync_tracking_client(track_id: String, cl_id: String, pos: Vector2):
+	tracking_id = track_id
+	client_id = cl_id
+	is_tracked_player = tracking_id != "" and client_id != ""
+	
+	if pos != Vector2.ZERO:
+		move_to_position(pos)
+
+func check_inactivity():
+	var current_time = Time.get_unix_time_from_system()
+	if current_time - last_position_update > 10.0:
+		print("inactif")
+		is_active = false
+		visible = false
 	else:
-		process_network_movement(delta)
-	
-	update_visuals()
+		print("actif")
+		is_active = true
+		visible = true
 
-## Traitement de l'entrée locale
-func process_local_input():
-	var input_dir = Input.get_vector("move_left", "move_right", "move_up", "move_down")
-	velocity = input_dir * move_speed
-	move_and_slide()
-	
-	if input_dir != Vector2.ZERO:
-		last_direction = input_dir
-		target_position = position
-	
-	# Envoi périodique de la position
-	if Engine.get_frames_drawn() % 10 == 0:
-		send_position_update()
-	
-	# Tir
-	if Input.is_action_just_pressed("shoot"):
-		perform_shoot(Time.get_ticks_msec())
+# ACTIONS DISPONIBLES
+func _do_shoot(data: Dictionary):
+	if ammo > 0:
+		ammo -= 1
+		# Logique de tir
+		pass
 
-## Mouvement pour les joueurs réseau
-func process_network_movement(delta):
-	if position.distance_to(target_position) > 5.0:
-		var direction = position.direction_to(target_position)
-		velocity = direction * move_speed
-		move_and_slide()
-	else:
-		velocity = Vector2.ZERO
+func _do_reload(data: Dictionary):
+	ammo = 5
+	# Logique de rechargement
+	pass
 
-## Mise à jour visuelle
-func update_visuals():
-	if velocity.x != 0:
-		sprite.flip_h = velocity.x < 0
-	
-	if velocity != Vector2.ZERO:
-		animation_player.play("walk")
-	else:
-		animation_player.play("idle")
+func _do_heal(data: Dictionary):
+	health = min(health + data.get("amount", 1), 10)
+	# Logique de soin
+	pass
 
-## Réception de position du serveur
-func _on_position_received(player_id, new_position):
-	if name == str(player_id) and not is_local_player:
-		target_position = new_position
+func _do_move(data: Dictionary):
+	# Logique de mouvement supplémentaire
+	pass
 
-## Réception d'action du serveur
-func _on_action_received(player_id, action, timestamp):
-	if name == str(player_id):
-		execute_historical_action(action, {}, timestamp)
-
-## Exécution d'action avec compensation de latence
-func execute_historical_action(action, params, action_time):
-	match action:
-		"shoot":
-			var historical_pos = NetworkManager.get_historical_position(name, action_time)
-			var historical_dir = params.get("direction", last_direction)
-			spawn_bullet(historical_pos, historical_dir)
+func _process(delta):
+	#global_position = get_global_mouse_position()
+	# Mise à jour de la dernière activité
+	pass 
+	#if position != Vector2.ZERO:
+		#last_position_update = Time.get_unix_time_from_system()
 		
-		"damage":
-			var amount = params.get("amount", 0)
-			take_damage(amount)
-
-## Envoi de la position au serveur
-func send_position_update():
-	if is_local_player:
-		NetworkManager.send_data({
-			"type": "position_update",
-			"x": position.x,
-			"y": position.y,
-			"timestamp": Time.get_ticks_msec()
-		})
-
-## Action de tir
-func perform_shoot(timestamp):
-	# Tir local immédiat
-	spawn_bullet(gun.global_position, last_direction)
-	
-	# Envoi au serveur
-	NetworkManager.send_data({
-		"type": "player_action",
-		"action": "shoot",
-		"params": {
-			"direction": last_direction,
-			"timestamp": timestamp
-		}
-	})
-
-## Création d'une balle
-func spawn_bullet(spawn_pos, direction):
-	var bullet = preload("res://entities/balle/balle.tscn").instantiate()
-	bullet.initialize(spawn_pos, direction, self)
-	get_parent().add_child(bullet)
-	emit_signal("fired_bullet", spawn_pos, direction)
-
-## Prise de dégâts
-func take_damage(amount):
-	health -= amount
-	animation_player.play("hurt")
-	
-	if health <= 0:
-		die()
-
-## Mort du joueur
-func die():
-	set_process(false)
-	set_physics_process(false)
-	animation_player.play("die")
+func _input(event):
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT :
+		print("move")
+		move_to_position(get_global_mouse_position())
+		
+		#_on_player_change_position(gd_id,get_global_mouse_position() )
+		#global_position = get_global_mouse_position()
+		#push_nearby_balls()
+		#can_push = false
+		#$CooldownTimer.start()
