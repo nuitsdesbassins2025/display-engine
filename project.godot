@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Dopamine"
-run/main_scene="uid://df1x7k5g75tum"
+run/main_scene="res://Scenes/dogeball.tscn"
 config/features=PackedStringArray("4.2", "Mobile")
 config/icon="res://icon.svg"
 
