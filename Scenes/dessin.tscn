@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://baqqiy27gdc7p"]
+
+[ext_resource type="Script" uid="uid://cukeyhkj3wugu" path="res://Scenes/dessin.gd" id="1_qo4v2"]
+
+[node name="Dessin" type="Node2D"]
+script = ExtResource("1_qo4v2")
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="."]

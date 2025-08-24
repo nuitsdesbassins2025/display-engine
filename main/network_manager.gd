@@ -10,6 +10,7 @@ signal player_connected(player_id)
 signal player_disconnected(player_id)
 signal position_received(player_id, position)
 signal action_received(player_id, action, timestamp)
+signal client_action_trigger(client_id: String, action: String, datas: Dictionary)
 
 signal move_player(player_id, target_position)
 
@@ -38,11 +39,18 @@ var is_debug_active: bool = false
 func _ready():
 	client = SocketIO.new()
 	add_child(client)
-	client.base_url = "http://localhost:5000"
+	client.base_url = websocket_url
+	
+	
+	
 	client.socket_connected.connect(_on_socket_connected)
 	client.event_received.connect(_on_event_received)
 	client.connect_socket()
-	setup_debug_timer()
+	
+
+	
+	
+	#setup_debug_timer()
 
 
 
@@ -56,8 +64,9 @@ func setup_debug_timer():
 
 	# Démarre automatiquement le debug (optionnel)
 	start_debug_mode()
-	#setup_websocket()
+	
 	# Fonction pour démarrer le mode debug
+	
 func start_debug_mode():
 	if not is_debug_active:
 		is_debug_active = true
@@ -103,13 +112,23 @@ func _on_socket_connected(_namespace) -> void:
 	print("Connecté, envoi get_user_data")
 
 func _on_event_received(event: String, data: Variant, ns: String) -> void:
-	print("Event : ", event, " datas : ", data)
+	#print("Event : ", event, " datas : ", data)
 	if event == "user_data":
 		# OK, tu es identifié
 		pass
 	if event == "action_triggered_by":
+		pass
 		print("Action déclenchée par serveur local 👍 :", data)
 		# fais ton traitement
+		
+	if event == "client_action_trigger":
+		print("Action déclenchée par serveur local 👍 :", data)
+		
+		print(data[0])
+		var client_id = data[0].client_id
+		var action = data[0].action
+		var datas = data[0].datas
+		client_action_trigger.emit(client_id, action, datas)
 		
 		
 		
