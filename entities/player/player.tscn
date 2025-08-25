@@ -19,7 +19,7 @@ polygon = PackedVector2Array(-24, -43, -2, -49, 15, -46, 34, -37, 46, -17, 0, 0,
 
 [node name="Area2D" type="Area2D" parent="Shield"]
 
-[node name="shield_collision" type="CollisionShape2D" parent="Shield/Area2D"]
+[node name="shield_collision" type="CollisionShape2D" parent="Shield"]
 scale = Vector2(5, 5)
 shape = SubResource("CircleShape2D_symyc")
 one_way_collision = true
