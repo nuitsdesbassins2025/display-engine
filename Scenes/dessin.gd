@@ -2,6 +2,14 @@
 extends Node2D
 
 var last_trace_position: Vector2
+var last_trace_timestamp: int = 0
+
+var client_trace_data: Dictionary = {}  # {client_id: {position: Vector2, timestamp: int}}
+
+
+const TRACE_TIMEOUT_MS: int = 700  # .7 seconde
+
+
 var is_first_trace: bool = true
 var trace_lines: Array = []
 
@@ -30,15 +38,15 @@ func _on_client_action_trigger(client_id:String, action: String, datas: Dictiona
 	match action:
 
 		"pailettes":
-			handle_pailettes(datas)
+			handle_pailettes(client_id, datas)
 		"touch_screen":
-			handle_pailettes(datas)
-			#handle_trace(datas)
+			handle_pailettes(client_id, datas)
+			handle_trace(client_id, datas)
 		"clear":
 			clear_traces()
 
 
-func handle_pailettes(datas: Dictionary):
+func handle_pailettes(client_id: String, datas: Dictionary):
 	var position = convert_percentage_to_screen(datas.x, datas.y)
 	
 	var particles = GPUParticles2D.new()
@@ -72,19 +80,41 @@ func handle_pailettes(datas: Dictionary):
 	
 	particles.finished.connect(particles.queue_free)
 
-func handle_trace(datas: Dictionary):
-	
-	print("handle_trace")
+func handle_trace(client_id: String, datas: Dictionary):
+	print("handle_trace - client_id: ", client_id)
 	var current_position = convert_percentage_to_screen(datas.x, datas.y)
+	var current_time = Time.get_ticks_msec()
 	
-	if is_first_trace:
-		last_trace_position = current_position
-		is_first_trace = false
+	# Initialiser ou récupérer les données du client
+	if not client_trace_data.has(client_id):
+		client_trace_data[client_id] = {
+			"position": current_position,
+			"timestamp": current_time
+		}
+		print("Premier trait pour le client: ", client_id)
 		return
-	datas.color = "4E0A3A"
+	
+	var client_data = client_trace_data[client_id]
+	var time_since_last = current_time - client_data.timestamp
+	
+	# Vérifier le délai (1 seconde)
+	if time_since_last > 1000:
+		print("Délai dépassé - nouveau trait pour: ", client_id)
+		client_data.position = current_position
+		client_data.timestamp = current_time
+		return
+	
+	# Dessiner la ligne entre l'ancienne et la nouvelle position
+	create_line(client_data.position, current_position, datas.color)
+	
+	# Mettre à jour les données
+	client_data.position = current_position
+	client_data.timestamp = current_time
 
-	create_line(last_trace_position, current_position, datas.color)
-	last_trace_position = current_position
+func is_trace_timed_out(current_time: int) -> bool:
+	return (current_time - last_trace_timestamp) > TRACE_TIMEOUT_MS
+
+	
 
 func create_line(from: Vector2, to: Vector2, color_hex: String):
 	var line = Line2D.new()
