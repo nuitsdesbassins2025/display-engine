@@ -14,14 +14,26 @@ var is_first_trace: bool = true
 var trace_lines: Array = []
 
 func _ready():
+	
 	# Fond noir
+	generate_background()
+	# Attendre que le NetworkManager soit prêt
+	call_deferred("connect_signal")
+	
+	
+func generate_background():
+	var container = Control.new()
+	container.size = get_viewport().get_visible_rect().size
+	add_child(container)
+
+	# Ajouter le ColorRect comme enfant du container
 	var color_rect = ColorRect.new()
-	color_rect.color = Color.BLACK
+	color_rect.color = "000"
+	color_rect.anchor_left = 0
+	color_rect.anchor_top = 0
 	color_rect.anchor_right = 1
 	color_rect.anchor_bottom = 1
-	add_child(color_rect)
-		# Attendre que le NetworkManager soit prêt
-	call_deferred("connect_signal")
+	container.add_child(color_rect)
 
 func connect_signal():
 	if NetworkManager.has_signal("client_action_trigger"):
@@ -39,12 +51,22 @@ func _on_client_action_trigger(client_id:String, action: String, datas: Dictiona
 
 		"pailettes":
 			handle_pailettes(client_id, datas)
-		"touch_screen":
-			handle_pailettes(client_id, datas)
-			handle_trace(client_id, datas)
+		"dessin_touch":
+			handle_dessin(client_id, datas)
+			#handle_pailettes(client_id, datas)
+			#handle_trace(client_id, datas)
 		"clear":
 			clear_traces()
 
+func handle_dessin(client_id: String, datas: Dictionary):
+	var tool = datas.settings.tool
+	
+	match tool:
+		"glitter":
+			handle_pailettes(client_id, datas)
+		"brush":
+			handle_trace(client_id, datas)
+			
 
 func handle_pailettes(client_id: String, datas: Dictionary):
 	var position = convert_percentage_to_screen(datas.x, datas.y)
@@ -64,7 +86,7 @@ func handle_pailettes(client_id: String, datas: Dictionary):
 	process_material.gravity = Vector3(0, 98, 0)
 	
 	# Créer un dégradé de couleur
-	var base_color = Color(datas.color)
+	var base_color = Color(datas.settings.color)
 	var color_ramp = Gradient.new()
 	color_ramp.add_point(0.0, base_color)
 	color_ramp.add_point(1.0, base_color.darkened(0.4))
@@ -86,7 +108,7 @@ func handle_trace(client_id: String, datas: Dictionary):
 	var current_time = Time.get_ticks_msec()
 	
 	# Initialiser ou récupérer les données du client
-	if not client_trace_data.has(client_id):
+	if not client_trace_data.has(client_id) or datas.first:
 		client_trace_data[client_id] = {
 			"position": current_position,
 			"timestamp": current_time
@@ -105,7 +127,7 @@ func handle_trace(client_id: String, datas: Dictionary):
 		return
 	
 	# Dessiner la ligne entre l'ancienne et la nouvelle position
-	create_line(client_data.position, current_position, datas.color)
+	create_line(client_data.position, current_position, datas.settings.color, datas.settings.brushSize)
 	
 	# Mettre à jour les données
 	client_data.position = current_position
@@ -116,16 +138,30 @@ func is_trace_timed_out(current_time: int) -> bool:
 
 	
 
-func create_line(from: Vector2, to: Vector2, color_hex: String):
+func create_line(from: Vector2, to: Vector2, color_hex: String, line_thickness:int = 2):
 	var line = Line2D.new()
 	line.add_point(from)
 	line.add_point(to)
-	line.width = 2
+	line.width = line_thickness
 	line.default_color = Color(color_hex)
 	line.antialiased = true
 	
 	add_child(line)
 	trace_lines.append(line)
+	
+	# Animation de fondu
+	var tween = create_tween()
+	tween.tween_interval(2.0)  # Attendre 2 secondes
+	tween.tween_property(line, "modulate:a", 0.0, 1.0)  # Fondu de 1 seconde
+	tween.tween_callback(_remove_line.bind(line))
+
+func _remove_line(line: Line2D):
+	if is_instance_valid(line):
+		line.queue_free()
+	trace_lines.erase(line)
+	
+	
+
 
 func convert_percentage_to_screen(x_percent: float, y_percent: float) -> Vector2:
 	var viewport_size = get_viewport_rect().size

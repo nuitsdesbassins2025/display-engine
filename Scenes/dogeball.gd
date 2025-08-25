@@ -94,3 +94,29 @@ func draw_grid():
 	# Dessine les lignes horizontales
 	for y in range(0, int(viewport_size.y) + 1, cell_size):
 		draw_line(Vector2(0, y), Vector2(viewport_size.x, y), grid_color, line_thickness)
+
+
+func _input(event):
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT :
+		print("move")
+		
+		#move_to_position(get_global_mouse_position())
+
+
+	# Menu de debug avec touches A Z E R T
+	if event is InputEventKey and event.pressed:
+		match event.keycode:
+			KEY_A:
+				print("trigger_shield")
+			#	trigger_shield()
+				pass
+			KEY_Z:
+				
+				_on_move_player(150,Vector2(10,10))
+				pass
+			KEY_E:
+				pass
+			KEY_R:
+				pass
+			KEY_T:
+				pass

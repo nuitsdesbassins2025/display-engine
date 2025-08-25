@@ -7,10 +7,23 @@
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_symyc")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="player_collision_shape" type="CollisionShape2D" parent="."]
 scale = Vector2(5, 5)
 shape = SubResource("CircleShape2D_symyc")
 
-[node name="Polygon2D" type="Polygon2D" parent="."]
+[node name="Shield" type="Node2D" parent="."]
+
+[node name="shield" type="Polygon2D" parent="Shield"]
+color = Color(0.786565, 0.966399, 0, 1)
+polygon = PackedVector2Array(-24, -43, -2, -49, 15, -46, 34, -37, 46, -17, 0, 0, 46, 16, 33, 36, 14, 47, -7, 49, -28, 41, -37, 31, -49, 3, -44, -26)
+
+[node name="Area2D" type="Area2D" parent="Shield"]
+
+[node name="shield_collision" type="CollisionShape2D" parent="Shield/Area2D"]
+scale = Vector2(5, 5)
+shape = SubResource("CircleShape2D_symyc")
+one_way_collision = true
+
+[node name="player_skin" type="Polygon2D" parent="."]
 color = Color(0.960784, 0.901961, 0.203922, 1)
 polygon = PackedVector2Array(-24, -43, -2, -49, 15, -46, 34, -37, 46, -17, -1, 0, 46, 16, 33, 36, 14, 47, -7, 49, -28, 41, -37, 31, -49, 3, -44, -26)

@@ -5,4 +5,24 @@
 [node name="Dessin" type="Node2D"]
 script = ExtResource("1_qo4v2")
 
+[node name="Container" type="Container" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
 [node name="CPUParticles2D" type="CPUParticles2D" parent="."]
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1125.0
+offset_bottom = 602.0
+size_flags_horizontal = 3
+
+[node name="ColorRect" type="ColorRect" parent="Control"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2

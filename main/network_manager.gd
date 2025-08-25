@@ -32,7 +32,7 @@ var client: SocketIO
 
 # Variables pour le debug
 var debug_timer: Timer
-var is_debug_active: bool = false
+var is_debug_active: bool = true
 
 
 
@@ -50,7 +50,7 @@ func _ready():
 
 	
 	
-	#setup_debug_timer()
+	setup_debug_timer()
 
 
 

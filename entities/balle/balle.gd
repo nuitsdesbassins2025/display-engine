@@ -81,3 +81,9 @@ func _maintain_minimum_speed():
 
 func reset_velocity():
 	_set_random_velocity()
+
+
+func _on_body_entered(body: Node) -> void:
+	print("collision detected")
+	print(body)
+	pass # Replace with function body.

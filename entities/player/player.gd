@@ -8,7 +8,9 @@ class_name Player
 		# Mettez à jour ici ce qui dépend de l'ID
 		_update_player_identity()
 		
-		
+
+var SHIELDSIZE: float = 3
+
 # Propriétés du joueur
 var gd_id: String = ""
 var client_id: String = ""
@@ -20,14 +22,20 @@ var is_active: bool = true
 var player_color: Color = Color.WHITE
 var health: int = 10
 var ammo: int = 5
-
 # Timer pour l'inactivité
 var inactivity_timer: Timer
 var last_position_update: float = 0.0
 
+var is_shield_active: bool = false
+var can_use_shield: bool = true
+var shield_cooldown: float = 2.0  # 2 secondes de cooldown
+
+
 # Références aux nodes
-@onready var collision_shape: CollisionShape2D = $CollisionShape2D
+@onready var collision_shape: CollisionShape2D = $player_collision_shape
 @onready var sprite: Sprite2D = $Sprite2D
+
+@onready var shield = $bouclier
 
 # Dictionnaire des actions disponibles
 var actions_map: Dictionary = {}
@@ -94,36 +102,6 @@ func setup_actions_map():
 		"move": _do_move
 	}
 
-#func create_circle_texture() -> Texture2D:
-	## Création d'une texture de cercle programmatiquement
-	#var image = Image.create(20, 20, false, Image.FORMAT_RGBA8)
-	#image.fill(Color.TRANSPARENT)
-	#
-	## Dessiner un cercle (simplifié)
-	#var center = Vector2(10, 10)
-	#for x in range(20):
-		#for y in range(20):
-			#if Vector2(x, y).distance_to(center) <= 8:
-				#image.set_pixel(x, y, Color.WHITE)
-	#
-	#return ImageTexture.create_from_image(image)
-
-## SIGNAL HANDLERS
-#func _on_player_change_position( new_position: Vector2):
-	##if player_id == gd_id:
-	#move_to_position(new_position)
-#
-#func _on_player_do_action(player_id: String, action: String, action_datas: Dictionary):
-	#if player_id == gd_id and actions_map.has(action):
-		#actions_map[action].call(action_datas)
-#
-#func _on_player_set_color(player_id: String, color: Color):
-	#if player_id == gd_id:
-		#set_player_color(color)
-#
-#func _on_player_sync_tracking_client(player_id: String, track_id: String, cl_id: String, pos: Vector2):
-	#if player_id == gd_id:
-		#sync_tracking_client(track_id, cl_id, pos)
 
 func _on_inactivity_timeout():
 	check_inactivity()
@@ -192,6 +170,46 @@ func check_inactivity():
 		is_active = true
 		visible = true
 
+
+
+func trigger_shield():
+	is_shield_active = true
+	
+	var collision_shape = $Shield/shield_collision
+	var shield_visual = $Shield/shield
+	
+	var tween = create_tween()
+	tween.set_parallel(true)
+	
+	# Animer les deux
+	tween.tween_property(collision_shape, "scale", Vector2(SHIELDSIZE, SHIELDSIZE), 0.3)
+	tween.tween_property(shield_visual, "scale", Vector2(SHIELDSIZE, SHIELDSIZE), 0.3)
+	tween.tween_property(collision_shape, "scale", Vector2(1.0, 1.0), 0.7).set_delay(0.3)
+	tween.tween_property(shield_visual, "scale", Vector2(1.0, 1.0), 0.7).set_delay(0.3)
+	
+	tween.tween_callback(_on_shield_animation_finished).set_delay(1.0)
+	
+
+func _on_shield_animation_finished():
+	is_shield_active = false
+	print("Shield désactivé")
+
+func _reset_shield_cooldown():
+	can_use_shield = true
+	print("Shield prêt à être utilisé à nouveau")
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
 # ACTIONS DISPONIBLES
 func _do_shoot(data: Dictionary):
 	if ammo > 0:
@@ -224,8 +242,26 @@ func _input(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT :
 		print("move")
 		move_to_position(get_global_mouse_position())
-		
-		#_on_player_change_position(gd_id,get_global_mouse_position() )
+
+
+	# Menu de debug avec touches A Z E R T
+	if event is InputEventKey and event.pressed:
+		match event.keycode:
+			KEY_A:
+				print("trigger_shield")
+				trigger_shield()
+				pass
+			KEY_Z:
+				pass
+				pass
+			KEY_E:
+				pass
+			KEY_R:
+				pass
+			KEY_T:
+				pass
+
+				#_on_player_change_position(gd_id,get_global_mouse_position() )
 		#global_position = get_global_mouse_position()
 		#push_nearby_balls()
 		#can_push = false
