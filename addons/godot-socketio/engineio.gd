@@ -193,9 +193,9 @@ func _on_open(body: String = ""):
 	state = State.CONNECTED
 
 	session_id = json.data["sid"]
-	_ping_interval = json.data["pingInterval"]
-	_pong_timeout = json.data["pingTimeout"]
-	_max_payload = json.data["maxPayload"]
+	_ping_interval = json.data.get("pingInterval",0)
+	_pong_timeout = json.data.get("pingTimeout",0)
+	_max_payload = json.data.get("maxPayload",0)
 	if "websocket" in json.data["upgrades"]:
 		_transport_type = TransportType.WEBSOCKET
 		_upgrade_transport()
