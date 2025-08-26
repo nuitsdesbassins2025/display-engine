@@ -1,5 +1,8 @@
 extends Node
 
+# A mettre en true si on veuc afficher le débug de TOUTES les actions
+var debbug_datas = true
+
 ## Gestion principale du réseau et de la compensation de latence
 ## - Communication WebSocket
 ## - Interpolation des positions
@@ -112,7 +115,10 @@ func _on_socket_connected(_namespace) -> void:
 	print("Connecté, envoi get_user_data")
 
 func _on_event_received(event: String, data: Variant, ns: String) -> void:
-	#print("Event : ", event, " datas : ", data)
+	
+	if debbug_datas == true:
+		print("Event DEBUG : ", event, " datas : ", data)
+	
 	if event == "user_data":
 		# OK, tu es identifié
 		pass
@@ -122,7 +128,7 @@ func _on_event_received(event: String, data: Variant, ns: String) -> void:
 		# fais ton traitement
 	if event == "tracking_datas":
 		print("tracking data recues")
-		handle_tracking_datas(data)
+		handle_tracking_datas(data[0])
 			
 	if event == "client_action_trigger":
 		print("Action déclenchée par serveur local 👍 :", data)
@@ -202,11 +208,10 @@ func handle_tracking_datas(data):
 	var tracking_datas = data.emit_data.tracking_datas
 	
 	for track_data in tracking_datas:
-		var tracking_position : Vector2 = Vector2(track_data.posX, track_data.posY)
-		var tracking_id : String = track_data.tracking_id
-
-		emit_signal("position_received", tracking_id, tracking_position)
-	#pass
+		if track_data.posX and track_data.posY :
+			var tracking_position : Vector2 = Vector2(track_data.posX, track_data.posY)
+			var tracking_id : String = track_data.tracking_id
+			emit_signal("position_received", tracking_id, tracking_position)
 
 
 
