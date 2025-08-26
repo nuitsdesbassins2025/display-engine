@@ -1,5 +1,8 @@
 extends Node2D
 
+signal ball_bounce()
+
+
 # Référence au prototype de joueur
 @export var player_scene: PackedScene
 

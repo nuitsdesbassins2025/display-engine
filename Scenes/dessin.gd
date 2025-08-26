@@ -85,7 +85,7 @@ func handle_pailettes(client_id: String, datas: Dictionary):
 	process_material.initial_velocity_max = 50
 	process_material.gravity = Vector3(0, 98, 0)
 	
-	# Créer un dégradé de couleur
+	# Convertir le code hexadécimal en couleur Godot
 	var base_color = Color(datas.settings.color)
 	var color_ramp = Gradient.new()
 	color_ramp.add_point(0.0, base_color)
@@ -94,14 +94,13 @@ func handle_pailettes(client_id: String, datas: Dictionary):
 	
 	process_material.scale_min = 0.5  # Taille minimale
 	process_material.scale_max = 0.8  # Taille maximale
-
 	
 	particles.process_material = process_material
 	
 	add_child(particles)
 	
 	particles.finished.connect(particles.queue_free)
-
+	
 func handle_trace(client_id: String, datas: Dictionary):
 	print("handle_trace - client_id: ", client_id)
 	var current_position = convert_percentage_to_screen(datas.x, datas.y)

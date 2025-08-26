@@ -19,6 +19,10 @@ config/icon="res://icon.svg"
 
 NetworkManager="*res://main/network_manager.gd"
 
+[dotnet]
+
+project/assembly_name="Dopamine"
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/godot-socketio/plugin.cfg")

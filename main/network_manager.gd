@@ -120,7 +120,10 @@ func _on_event_received(event: String, data: Variant, ns: String) -> void:
 		pass
 		print("Action déclenchée par serveur local 👍 :", data)
 		# fais ton traitement
-		
+	if event == "tracking_datas":
+		print("tracking data recues")
+		handle_tracking_datas(data)
+			
 	if event == "client_action_trigger":
 		print("Action déclenchée par serveur local 👍 :", data)
 		
@@ -182,9 +185,10 @@ func process_websocket():
 func handle_data(json_data):
 	var data = JSON.parse_string(json_data)
 	
-	print(data)
+	#print(data)
 	#match data.type:
-		#"player_connect":
+		#"tracking_datas":
+		#	handle_tracking_datas(data)
 			#handle_player_connect(data)
 		#"player_disconnect":
 			#handle_player_disconnect(data)
@@ -192,6 +196,19 @@ func handle_data(json_data):
 			#handle_position_update(data)
 		#"player_action":
 			#handle_player_action(data)
+
+func handle_tracking_datas(data):
+	
+	var tracking_datas = data.emit_data.tracking_datas
+	
+	for track_data in tracking_datas:
+		var tracking_position : Vector2 = Vector2(track_data.posX, track_data.posY)
+		var tracking_id : String = track_data.tracking_id
+
+		emit_signal("position_received", tracking_id, tracking_position)
+	#pass
+
+
 
 ## Gestion de la connexion d'un joueur
 func handle_player_connect(data):

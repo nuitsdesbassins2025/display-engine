@@ -1,5 +1,16 @@
 extends RigidBody2D
 
+# Les données de la balle
+signal ball_datas(ball_id, datas)
+
+# Les rebonds, les collisions
+signal ball_events(ball_id, events)
+
+var ball_datas_2 : Dictionary = {
+	#posX posY speed size 
+ }
+	
+
 # Configuration
 @export var min_speed: float = 100.0
 @export var max_speed: float = 300.0
@@ -82,6 +93,9 @@ func _maintain_minimum_speed():
 func reset_velocity():
 	_set_random_velocity()
 
+func emit_ball_datas():
+	var ball_datas = {}
+	ball_datas.emit(ball_datas)
 
 func _on_body_entered(body: Node) -> void:
 	print("collision detected")
