@@ -128,7 +128,7 @@ func _on_event_received(event: String, data: Variant, ns: String) -> void:
 		# fais ton traitement
 	if event == "tracking_datas":
 		print("tracking data recues")
-		handle_tracking_datas(data[0])
+		handle_tracking_datas(data[0][0])
 			
 	if event == "client_action_trigger":
 		print("Action déclenchée par serveur local 👍 :", data)
@@ -204,14 +204,14 @@ func handle_data(json_data):
 			#handle_player_action(data)
 
 func handle_tracking_datas(data):
-	
-	var tracking_datas = data.emit_data.tracking_datas
-	
+
+	var tracking_datas = data.get('tracking_datas', [])
+
 	for track_data in tracking_datas:
-		if track_data.posX and track_data.posY :
-			var tracking_position : Vector2 = Vector2(track_data.posX, track_data.posY)
-			var tracking_id : String = track_data.tracking_id
-			emit_signal("position_received", tracking_id, tracking_position)
+
+		var tracking_position : Vector2 = Vector2(track_data['posX'], track_data['posY'])
+		var tracking_id : String = str(track_data['tracking_id'])
+		emit_signal("move_player", tracking_id, tracking_position)
 
 
 

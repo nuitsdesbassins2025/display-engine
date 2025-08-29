@@ -113,15 +113,24 @@ var current_move_tween: Tween = null
 
 func move_to_position(target_position: Vector2):
 	#On met à jours pour l'inactivité
+	var screen_size = get_viewport().get_visible_rect().size
+	
+	# Convertir les coordonnées normalisées (0-100) en coordonnées écran
+	var actual_position = Vector2(
+		target_position.x / 100.0 * screen_size.x,
+		target_position.y / 100.0 * screen_size.y
+	)
+
+	
 	last_position_update = Time.get_unix_time_from_system()
 	
 	if not is_active:
 		set_active(true)
 
 	# Si très proche, téléportation immédiate
-	if global_position.distance_to(target_position) < 10.0:
+	if global_position.distance_to(actual_position) < 10.0:
 		print("tp")
-		global_position = target_position
+		global_position = actual_position
 		return
 
 	# Arrêter l'animation précédente
@@ -132,10 +141,10 @@ func move_to_position(target_position: Vector2):
 	current_move_tween = create_tween()
 
 	# Durée dynamique basée sur la distance
-	var distance = global_position.distance_to(target_position)
+	var distance = global_position.distance_to(actual_position)
 	var duration = clamp(distance / 400.0, 0.05, 0.3)
 
-	current_move_tween.tween_property(self, "global_position", target_position, duration)
+	current_move_tween.tween_property(self, "global_position", actual_position, duration)
 	current_move_tween.finished.connect(_cleanup_tween)
 
 func _cleanup_tween():

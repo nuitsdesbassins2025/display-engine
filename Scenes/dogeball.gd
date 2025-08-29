@@ -33,7 +33,7 @@ func _ready():
 func _draw():
 	draw_grid()
 
-func _on_move_player(id: int, target_position: Vector2):
+func _on_move_player(id: String, target_position: Vector2):
 	print("ID : ", id, " spawned at : ", target_position)
 	# Vérifie si le joueur existe déjà
 	if players.has(id):
@@ -45,7 +45,7 @@ func _on_move_player(id: int, target_position: Vector2):
 		_spawn_player(id, target_position)
 
 
-func _spawn_player(id: int, spawn_position: Vector2):
+func _spawn_player(id: String, spawn_position: Vector2):
 	if player_scene:
 		var new_player = player_scene.instantiate()
 		new_player.player_id = id
@@ -115,7 +115,7 @@ func _input(event):
 				pass
 			KEY_Z:
 				
-				_on_move_player(150,Vector2(10,10))
+				_on_move_player("player150",Vector2(10,10))
 				pass
 			KEY_E:
 				pass
