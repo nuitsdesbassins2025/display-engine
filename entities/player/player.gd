@@ -22,6 +22,9 @@ var is_active: bool = true
 var player_color: Color = Color.WHITE
 var health: int = 10
 var ammo: int = 5
+
+var queue: int = 0
+
 # Timer pour l'inactivité
 var inactivity_timer: Timer
 var last_position_update: float = 0.0
@@ -50,16 +53,7 @@ func _ready():
 func setup_player():
 	
 	pass
-	# Configuration du sprite en cercle
-	#var circle_texture = create_circle_texture()
-	#sprite.texture = circle_texture
-	#sprite.modulate = player_color
-	#
-	## Configuration de la collision
-	#var circle_shape = CircleShape2D.new()
-	#circle_shape.radius = 10
-	#collision_shape.shape = circle_shape
-	#
+
 	
 func _update_player_identity():
 	print("Player ID set to: ", player_id)
@@ -155,7 +149,11 @@ func set_active(active: bool):
 	visible = active
 	set_physics_process(active)  # Désactiver le processing si inactif
 
-
+func agrandir_queue(montant: int):
+	queue += montant
+	print("queue +", montant, " = ", queue)
+	
+	
 func set_player_color(color: Color):
 	player_color = color
 	sprite.modulate = player_color
@@ -249,8 +247,9 @@ func _process(delta):
 		
 func _input(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT :
-		print("move")
-		move_to_position(get_global_mouse_position())
+	#	print("move")
+	#	move_to_position(get_global_mouse_position())
+		pass
 
 
 	# Menu de debug avec touches A Z E R T

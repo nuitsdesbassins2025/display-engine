@@ -30,6 +30,7 @@ func _ready():
 	spawn_ball()
 	queue_redraw()
 
+
 func _draw():
 	draw_grid()
 
@@ -102,7 +103,15 @@ func draw_grid():
 func _input(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT :
 		print("move")
-		
+		var mouse_pos = get_global_mouse_position()
+		var viewport_size = get_viewport().get_visible_rect().size
+
+		# Mapper X entre 0 et 100
+		var mapped_x = (mouse_pos.x / viewport_size.x) * 100
+
+		# Mapper Y entre 0 et 100
+		var mapped_y = (mouse_pos.y / viewport_size.y) * 100
+		_on_move_player("click_player",Vector2(mapped_x,mapped_y)) 
 		#move_to_position(get_global_mouse_position())
 
 

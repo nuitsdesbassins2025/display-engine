@@ -5,6 +5,7 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_symyc"]
 
 [node name="Player" type="CharacterBody2D"]
+motion_mode = 1
 script = ExtResource("1_symyc")
 
 [node name="player_collision_shape" type="CollisionShape2D" parent="."]

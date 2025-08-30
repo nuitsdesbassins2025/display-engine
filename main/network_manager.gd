@@ -137,7 +137,25 @@ func _on_event_received(event: String, data: Variant, ns: String) -> void:
 		var client_id = data[0].client_id
 		var action = data[0].action
 		var datas = data[0].datas
-		client_action_trigger.emit(client_id, action, datas)
+		
+		if action == "client_move":
+			
+			var datas_tacking = {
+				"tracking_fps": 9.84983032936065,
+				"tracking_datas": [
+					{
+					"tracking_id": datas.settings.player_id, 
+					"related_client_id": client_id, 
+					"posX": datas.x, 
+					"posY": datas.y, 
+					"state": "lost",
+					 "lost_frame": 164.0, 
+					"zone": "game" }
+					]
+				}
+			handle_tracking_datas(datas_tacking)
+		else :
+			client_action_trigger.emit(client_id, action, datas)
 		
 		
 		
