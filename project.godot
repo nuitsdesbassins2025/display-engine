@@ -27,6 +27,14 @@ project/assembly_name="Dopamine"
 
 enabled=PackedStringArray("res://addons/godot-socketio/plugin.cfg")
 
+[layer_names]
+
+2d_physics/layer_1="players"
+2d_physics/layer_2="objects"
+2d_physics/layer_3="environment"
+2d_physics/layer_4="bonuses"
+2d_physics/layer_5="enemies"
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"

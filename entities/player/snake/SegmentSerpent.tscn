@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3 uid="uid://dc10ggyvnqvvm"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bwbp7"]
+size = Vector2(39, 30)
+
+[node name="SegmentSerpent" type="Node2D"]
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+scale = Vector2(1.89189, 1.45161)
+color = Color(0.270588, 1, 1, 1)
+polygon = PackedVector2Array(0, -13, 1, 14, 11, 10, 16, 16, 24, 12, 28, 15, 37, 9, 36, -12, 26, -9, 15, -12, 14, -5, 3, -15)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(16.5, 0)
+shape = SubResource("RectangleShape2D_bwbp7")

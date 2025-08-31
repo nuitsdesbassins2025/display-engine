@@ -10,6 +10,7 @@ func _ready():
 	body_entered.connect(_on_body_entered)
 
 func _on_body_entered(body):
+	print("bonus body entered")
 	if body.is_in_group("players"):
 		# Émettre le signal avant de disparaître
 		emit_signal("bonus_ramasse", body.name, bonus_type)
@@ -24,7 +25,7 @@ func _appliquer_effet(joueur):
 	match bonus_type:
 		"nouriture":
 			if joueur.has_method("agrandir_queue"):
-				joueur.ajouter_vie(valeur)
+				joueur.agrandir_queue(valeur)
 		"vie":
 			if joueur.has_method("ajouter_vie"):
 				joueur.ajouter_vie(valeur)

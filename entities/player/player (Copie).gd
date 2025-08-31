@@ -1,0 +1,253 @@
+extends CharacterBody2D
+class_name Player2
+
+
+@export var player_id: int = -1:
+	set(value):
+		player_id = value
+		# Mettez à jour ici ce qui dépend de l'ID
+		_update_player_identity()
+		
+
+var SHIELDSIZE: float = 3
+
+# Propriétés du joueur
+var gd_id: String = ""
+var client_id: String = ""
+var tracking_id: String = ""
+
+var is_tracked_player: bool = false
+var is_active: bool = true
+
+var player_color: Color = Color.WHITE
+var health: int = 10
+var ammo: int = 5
+
+var snake_mode : bool = true
+var snake_size: int = 0
+
+# Timer pour l'inactivité
+var inactivity_timer: Timer
+var last_position_update: float = 0.0
+
+var is_shield_active: bool = false
+var can_use_shield: bool = true
+var shield_cooldown: float = 2.0  # 2 secondes de cooldown
+
+
+# Références aux nodes
+@onready var collision_shape: CollisionShape2D = $player_collision_shape
+@onready var sprite: Sprite2D = $Sprite2D
+
+@onready var shield = $bouclier
+
+# Dictionnaire des actions disponibles
+var actions_map: Dictionary = {}
+
+func _ready():
+	# Configuration initiale
+	setup_player()
+	#setup_signals()
+	setup_inactivity_timer()
+	setup_actions_map()
+
+func setup_player():
+	
+	pass
+
+	
+func _update_player_identity():
+	print("Player ID set to: ", player_id)
+	# Ajoutez ici la logique spécifique à l'ID
+	# Par exemple : changer la couleur, le nom, etc.
+	
+	
+func setup_signals():
+	pass
+
+
+
+func setup_inactivity_timer():
+	inactivity_timer = Timer.new()
+	add_child(inactivity_timer)
+	inactivity_timer.wait_time = 10.0
+	inactivity_timer.one_shot = false
+	inactivity_timer.timeout.connect(_on_inactivity_timeout)
+	inactivity_timer.start()
+
+func setup_actions_map():
+	# Mapping des actions disponibles
+	actions_map = {
+		"shoot": _do_shoot,
+		"reload": _do_reload,
+		"heal": _do_heal,
+		"move": _do_move
+	}
+
+
+func _on_inactivity_timeout():
+	check_inactivity()
+
+# FONCTIONS PRINCIPALES
+
+var current_move_tween: Tween = null
+
+
+func move_to_position(target_position: Vector2):
+	#On met à jours pour l'inactivité
+	var screen_size = get_viewport().get_visible_rect().size
+	
+	# Convertir les coordonnées normalisées (0-100) en coordonnées écran
+	var actual_position = Vector2(
+		target_position.x / 100.0 * screen_size.x,
+		target_position.y / 100.0 * screen_size.y
+	)
+
+	
+	last_position_update = Time.get_unix_time_from_system()
+	
+	if not is_active:
+		set_active(true)
+
+	# Si très proche, téléportation immédiate
+	if global_position.distance_to(actual_position) < 10.0:
+		print("tp")
+		global_position = actual_position
+		return
+
+	# Arrêter l'animation précédente
+	if current_move_tween:
+		current_move_tween.kill()
+
+	# Créer une nouvelle animation
+	current_move_tween = create_tween()
+
+	# Durée dynamique basée sur la distance
+	var distance = global_position.distance_to(actual_position)
+	var duration = clamp(distance / 400.0, 0.05, 0.3)
+
+	current_move_tween.tween_property(self, "global_position", actual_position, duration)
+	current_move_tween.finished.connect(_cleanup_tween)
+
+func _cleanup_tween():
+	current_move_tween = null
+
+func set_active(active: bool):
+	is_active = active
+	visible = active
+	set_physics_process(active)  # Désactiver le processing si inactif
+
+func agrandir_queue(montant: int):
+	snake_size += montant
+	print("snake_size +", montant, " = ", snake_size)
+	
+	
+func set_player_color(color: Color):
+	player_color = color
+	sprite.modulate = player_color
+
+func sync_tracking_client(track_id: String, cl_id: String, pos: Vector2):
+	tracking_id = track_id
+	client_id = cl_id
+	is_tracked_player = tracking_id != "" and client_id != ""
+	
+	if pos != Vector2.ZERO:
+		move_to_position(pos)
+
+func check_inactivity():
+	var current_time = Time.get_unix_time_from_system()
+	if current_time - last_position_update > 10.0:
+		print("inactif")
+		is_active = false
+		visible = false
+	else:
+		print("actif")
+		is_active = true
+		visible = true
+
+
+
+func trigger_shield():
+	is_shield_active = true
+	
+	var collision_shape = $Shield/shield_collision
+	var shield_visual = $Shield/shield
+	
+	var tween = create_tween()
+	tween.set_parallel(true)
+	
+	# Animer les deux
+	tween.tween_property(collision_shape, "scale", Vector2(SHIELDSIZE, SHIELDSIZE), 0.3)
+	tween.tween_property(shield_visual, "scale", Vector2(SHIELDSIZE, SHIELDSIZE), 0.3)
+	tween.tween_property(collision_shape, "scale", Vector2(1.0, 1.0), 0.7).set_delay(0.3)
+	tween.tween_property(shield_visual, "scale", Vector2(1.0, 1.0), 0.7).set_delay(0.3)
+	
+	tween.tween_callback(_on_shield_animation_finished).set_delay(1.0)
+	
+
+func _on_shield_animation_finished():
+	is_shield_active = false
+	print("Shield désactivé")
+
+func _reset_shield_cooldown():
+	can_use_shield = true
+	print("Shield prêt à être utilisé à nouveau")
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+# ACTIONS DISPONIBLES
+func _do_shoot(data: Dictionary):
+	if ammo > 0:
+		ammo -= 1
+		# Logique de tir
+		pass
+
+func _do_reload(data: Dictionary):
+	ammo = 5
+	# Logique de rechargement
+	pass
+
+func _do_heal(data: Dictionary):
+	health = min(health + data.get("amount", 1), 10)
+	# Logique de soin
+	pass
+
+func _do_move(data: Dictionary):
+	# Logique de mouvement supplémentaire
+	pass
+
+func _process(delta):
+	#global_position = get_global_mouse_position()
+	# Mise à jour de la dernière activité
+	pass 
+
+		
+func _input(event):
+
+
+	# Menu de debug avec touches A Z E R T
+	if event is InputEventKey and event.pressed:
+		match event.keycode:
+			KEY_A:
+				print("trigger_shield")
+				trigger_shield()
+				pass
+			KEY_Z:
+				pass
+				pass
+			KEY_E:
+				pass
+			KEY_R:
+				pass
+			KEY_T:
+				pass

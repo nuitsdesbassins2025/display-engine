@@ -5,6 +5,7 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_7s6xa"]
 
 [node name="Bonus" type="Area2D"]
+collision_layer = 8
 script = ExtResource("1_r8c8f")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -13,3 +14,5 @@ shape = SubResource("CircleShape2D_7s6xa")
 [node name="Polygon2D" type="Polygon2D" parent="."]
 color = Color(1, 1, 0, 1)
 polygon = PackedVector2Array(1, -9, 2, -5, 7, -6, 5, -2, 9, -1, 5, 1, 7, 5, 3, 5, 2, 9, -1, 5, -4, 9, -5, 4, -9, 3, -5, 1, -9, -3, -5, -3, -6, -8, -2, -5)
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

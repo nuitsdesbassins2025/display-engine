@@ -74,7 +74,7 @@ func _apply_proximity_repulsion(direction: Vector2, viewport_size: Vector2):
 		var repulsion_strength = wall_repulsion_strength * proximity_factor
 		
 		linear_velocity += direction * repulsion_strength
-		print("Répulsion proximité: force ", repulsion_strength)
+		#print("Répulsion proximité: force ", repulsion_strength)
 
 func _get_distance_to_nearest_wall(viewport_size: Vector2) -> float:
 	var distances = [
