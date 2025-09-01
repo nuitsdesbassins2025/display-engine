@@ -15,7 +15,7 @@ var players: Dictionary = {}
 		queue_redraw()
 
 @export var grid_color: Color = Color(0.3, 0.3, 0.3, 0.5)
-@export var background_color: Color = Color(0.1, 0.1, 0.1, 1.0)
+@export var background_color: Color = Color(0.01, 0.01, 0.01, 1.0)
 @export var line_thickness: float = 4
 
 # Précharge la scène de la balle
@@ -33,6 +33,10 @@ func _ready():
 
 func _draw():
 	draw_grid()
+	
+func _process(delta):
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		move_player_to_click()
 
 func _on_move_player(id: String, target_position: Vector2):
 	print("ID : ", id, " spawned at : ", target_position)
@@ -46,11 +50,13 @@ func _on_move_player(id: String, target_position: Vector2):
 		_spawn_player(id, target_position)
 
 
+
 func _spawn_player(id: String, spawn_position: Vector2):
 	if player_scene:
 		var new_player = player_scene.instantiate()
 		new_player.player_id = id
 		new_player.global_position = spawn_position
+		new_player.player_key = get_random_key()
 		add_child(new_player)
 		players[id] = new_player
 		
@@ -58,6 +64,37 @@ func _spawn_player(id: String, spawn_position: Vector2):
 		print("Player ", id, " spawned at: ", spawn_position)
 	else:
 		push_error("Player scene not assigned!")
+
+func get_random_key() -> String:
+	var random = RandomNumberGenerator.new()
+	random.randomize()
+	
+	var attempts = 0
+	var max_attempts = 1000  # Sécurité pour éviter une boucle infinie
+	
+	while attempts < max_attempts:
+		# Générer 4 chiffres aléatoires
+		var key = ""
+		for i in range(4):
+			key += str(random.randi_range(0, 9))
+		
+		# Vérifier si la clé existe déjà
+		var key_exists = false
+		for player_id in players:
+			if players[player_id].has("key") and players[player_id]["key"] == key:
+				key_exists = true
+				break
+		
+		# Si la clé n'existe pas, la retourner
+		if not key_exists:
+			return key
+		
+		attempts += 1
+	
+	# Fallback si trop de tentatives (très improbable)
+	push_error("Impossible de générer une clé unique après " + str(max_attempts) + " tentatives")
+	return str(random.randi_range(1000, 9999))  # Retourne un nombre aléatoire de 4 chiffres
+
 
 # Fonction pour nettoyer si besoin
 func remove_player(id: int):
@@ -89,7 +126,7 @@ func draw_grid():
 	var viewport_size = get_viewport_rect().size
 	
 		# Dessine le fond
-	# draw_rect(Rect2(0, 0, viewport_size.x, viewport_size.y), background_color)
+	draw_rect(Rect2(0, 0, viewport_size.x, viewport_size.y), background_color)
 	
 	# Dessine les lignes verticales
 	for x in range(0, int(viewport_size.x) + 1, cell_size):
@@ -99,19 +136,22 @@ func draw_grid():
 	for y in range(0, int(viewport_size.y) + 1, cell_size):
 		draw_line(Vector2(0, y), Vector2(viewport_size.x, y), grid_color, line_thickness)
 
+func move_player_to_click():
+	print("move")
+	var mouse_pos = get_global_mouse_position()
+	var viewport_size = get_viewport().get_visible_rect().size
+
+	# Mapper X entre 0 et 100
+	var mapped_x = (mouse_pos.x / viewport_size.x) * 100
+
+	# Mapper Y entre 0 et 100
+	var mapped_y = (mouse_pos.y / viewport_size.y) * 100
+	_on_move_player("click_player",Vector2(mapped_x,mapped_y)) 
+	
 
 func _input(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT :
-		print("move")
-		var mouse_pos = get_global_mouse_position()
-		var viewport_size = get_viewport().get_visible_rect().size
-
-		# Mapper X entre 0 et 100
-		var mapped_x = (mouse_pos.x / viewport_size.x) * 100
-
-		# Mapper Y entre 0 et 100
-		var mapped_y = (mouse_pos.y / viewport_size.y) * 100
-		_on_move_player("click_player",Vector2(mapped_x,mapped_y)) 
+		move_player_to_click()
 		#move_to_position(get_global_mouse_position())
 
 

@@ -19,6 +19,7 @@ script = ExtResource("1_12k6n")
 player_scene = ExtResource("2_b65vx")
 cell_size = 100
 grid_color = Color(1, 1, 1, 1)
+background_color = Color(0, 0, 0, 1)
 
 [node name="Polygon2D" type="Polygon2D" parent="."]
 visible = false

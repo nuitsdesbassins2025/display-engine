@@ -14,6 +14,12 @@ signal snake_size_changed(new_size: int)
 		player_id = value
 		_update_player_identity()
 
+@export var player_key: String = "0000":
+	set(value):
+		player_key = value
+		_update_player_identity()
+
+
 @export_category("Appearance")
 @export var player_color: Color = Color.WHITE:
 	set(value):
@@ -166,7 +172,6 @@ func _maintain_trail_length():
 		total_length -= removed_length
 	
 	_recalculate_snake_segments()
-
 func _recalculate_snake_segments():
 	if not snake_mode or path_points.size() < 2:
 		return
@@ -178,9 +183,10 @@ func _recalculate_snake_segments():
 	var accumulated_length: float = 0.0
 	var segment_index: int = 0
 	
-	for i in range(path_points.size() - 1):
-		var segment_start = path_points[i]
-		var segment_end = path_points[i + 1]
+	# Parcourir les segments dans l'ordre inverse
+	for i in range(path_points.size() - 2, -1, -1):
+		var segment_start = path_points[i + 1]  # Inversé
+		var segment_end = path_points[i]        # Inversé
 		var segment_length = segment_start.distance_to(segment_end)
 		var segment_direction = (segment_end - segment_start).normalized()
 		
@@ -202,8 +208,16 @@ func _create_snake_segment(position: Vector2, rotation: float, index: int):
 		return
 	
 	var segment = snake_segment_scene.instantiate()
-	get_parent().add_child(segment)  # Ajouter au parent pour éviter les problèmes de transformation
 	
+		# Déterminer le parent en fonction de l'index
+
+	get_parent().add_child(segment)
+	#print(get_parent())
+
+#	$SnakeTrail.add_child(segment,true)
+
+	
+	#get_parent().add_child(segment)  # Ajouter au parent pour éviter les problèmes de transformation
 	segment.global_position = position
 	segment.rotation = rotation
 	

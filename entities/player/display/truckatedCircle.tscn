@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://dqsoq5a06qq0h"]
+
+[ext_resource type="Script" uid="uid://dnd8d1tyqbaoh" path="res://entities/player/display/truckated_circle.gd" id="1_rfo1u"]
+
+[node name="TruckatedCircle" type="Node2D"]
+script = ExtResource("1_rfo1u")
+inner_radius = 190.494
+outer_radius = 259.877
