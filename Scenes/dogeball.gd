@@ -81,9 +81,10 @@ func get_random_key() -> String:
 		# Vérifier si la clé existe déjà
 		var key_exists = false
 		for player_id in players:
-			if players[player_id].has("key") and players[player_id]["key"] == key:
-				key_exists = true
-				break
+			if players[player_id] is Dictionary and players[player_id].has("key"):
+				if players[player_id]["key"] == key:
+					key_exists = true
+					break
 		
 		# Si la clé n'existe pas, la retourner
 		if not key_exists:

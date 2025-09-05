@@ -28,11 +28,6 @@ polygon = PackedVector2Array(-24, -43, -2, -49, 15, -46, 34, -37, 46, -17, 0, 0,
 
 [node name="Area2D" type="Area2D" parent="Shield"]
 
-[node name="shield_collision" type="CollisionShape2D" parent="Shield"]
-scale = Vector2(5, 5)
-shape = SubResource("CircleShape2D_symyc")
-one_way_collision = true
-
 [node name="player_skin" type="Polygon2D" parent="."]
 visible = false
 color = Color(0.960784, 0.901961, 0.203922, 1)
@@ -43,6 +38,6 @@ inner_radius = 50.0
 outer_radius = 60.0
 start_angle = 90.0
 end_angle = 360.0
-display_text = "BHJ"
+display_text = "0000"
 text_color = Color(0.857501, 0.857501, 0.857501, 1)
 text_spacing = 0.1

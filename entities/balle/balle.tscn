@@ -10,7 +10,7 @@ radius = 51.2878
 [node name="Balle" type="RigidBody2D"]
 scale = Vector2(5, 5)
 collision_layer = 2
-collision_mask = 23
+collision_mask = 17
 script = ExtResource("1_2ir51")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

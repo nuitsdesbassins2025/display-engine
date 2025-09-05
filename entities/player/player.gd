@@ -13,7 +13,11 @@ signal snake_mode_changed(active: bool)
 		player_id = value
 		_update_player_identity()
 
-@export var player_key: String = "0000"
+@export var player_key: String = "0000":
+	set(value):
+		player_key = value
+		_update_player_key()
+
 
 @export_category("Appearance")
 @export var player_color: Color = Color.WHITE:
@@ -116,6 +120,10 @@ func agrandir_queue(value):
 func _update_player_identity():
 	print("Player ID set to: ", player_id)
 
+func _update_player_key():
+	$TruckatedCircle.display_text = player_key
+	print("Player key set to: ", player_key)
+
 func _update_appearance():
 	if sprite:
 		sprite.modulate = player_color
@@ -186,15 +194,23 @@ func set_active(active: bool):
 	is_active = active
 	visible = active
 	set_physics_process(active)
+	
+	# Désactiver toutes les formes de collision
+	for child in get_children():
+		if child is CollisionShape2D or child is CollisionPolygon2D:
+			child.disabled = not active
+		# Ou si vous avez un nœud parent qui contient les collisionneurs
+		elif child is Node2D and child.has_method("set_collision_layer"):
+			child.set_collision_layer(0 if not active else 1)  # Ajustez le layer selon vos besoins
+
+	
 
 func check_inactivity():
 	var current_time = Time.get_unix_time_from_system()
 	if current_time - last_position_update > 10.0:
-		is_active = false
-		visible = false
+		set_active(false)
 	else:
-		is_active = true
-		visible = true
+		set_active(true)
 
 func _on_inactivity_timeout():
 	check_inactivity()

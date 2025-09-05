@@ -9,6 +9,13 @@ extends Node2D
 	set(value):
 		outer_radius = value
 		update_ring()
+		
+@export_range(0.0, 1000.0) var text_margin: float = 10.0:
+	set(value):
+		text_margin = value
+		update_ring()		
+
+
 
 @export_range(0.0, 360.0) var start_angle: float = 0.0:
 	set(value):
@@ -90,7 +97,7 @@ func update_ring():
 	var bg_points = PackedVector2Array()
 	for i in range(segments):
 		var angle = 2 * PI * i / segments
-		bg_points.append(Vector2(cos(angle), sin(angle)) * (outer_radius+10))
+		bg_points.append(Vector2(cos(angle), sin(angle)) * (outer_radius + text_margin))
 	background_circle.polygon = bg_points
 	
 	# Mettre à jour l'anneau
@@ -125,7 +132,7 @@ func update_text():
 	for child in text_container.get_children():
 		child.queue_free()
 
-	display_text = $"..".player_key
+#	display_text = $"..".player_key
 	if display_text.is_empty():
 		return
 		
