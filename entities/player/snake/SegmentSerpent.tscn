@@ -4,12 +4,14 @@
 size = Vector2(39, 30)
 
 [node name="SegmentSerpent" type="Node2D"]
+rotation = 1.57079
 
 [node name="Polygon2D" type="Polygon2D" parent="."]
+rotation = -3.14159
 scale = Vector2(1.89189, 1.45161)
 color = Color(0.270588, 1, 1, 1)
-polygon = PackedVector2Array(0, -13, 1, 14, 11, 10, 16, 16, 24, 12, 28, 15, 37, 9, 36, -12, 26, -9, 15, -12, 14, -5, 3, -15)
+polygon = PackedVector2Array(0, -13, -8.45715, -0.688915, 1, 14, 7.92855, 15.1556, 16, 16, 23.7857, 15.1557, 28, 15, 37, 9, 36, -12, 26, -9, 15, -12, 12.1572, -23.4222, 7.9286, -11.7111)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(16.5, 0)
+position = Vector2(-19, -1.00004)
 shape = SubResource("RectangleShape2D_bwbp7")

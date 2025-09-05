@@ -45,24 +45,30 @@ func _bounce_off_edges(viewport_size: Vector2):
 		linear_velocity.x = abs(linear_velocity.x) * bounce_factor
 		position.x = ball_radius
 		_apply_proximity_repulsion(Vector2.RIGHT, viewport_size)
+		_on_ball_bounce("wall")
 	
 	# Bord droit
 	elif position.x + ball_radius > viewport_size.x:
 		linear_velocity.x = -abs(linear_velocity.x) * bounce_factor
 		position.x = viewport_size.x - ball_radius
 		_apply_proximity_repulsion(Vector2.LEFT, viewport_size)
+		_on_ball_bounce("wall")
 	
 	# Bord haut
 	if position.y - ball_radius < 0:
 		linear_velocity.y = abs(linear_velocity.y) * bounce_factor
 		position.y = ball_radius
 		_apply_proximity_repulsion(Vector2.DOWN, viewport_size)
+		_on_ball_bounce("wall")
 	
 	# Bord bas
 	elif position.y + ball_radius > viewport_size.y:
 		linear_velocity.y = -abs(linear_velocity.y) * bounce_factor
 		position.y = viewport_size.y - ball_radius
 		_apply_proximity_repulsion(Vector2.UP, viewport_size)
+		_on_ball_bounce("wall")
+	
+	
 
 func _apply_proximity_repulsion(direction: Vector2, viewport_size: Vector2):
 	# Calcule la distance au mur le plus proche
@@ -101,3 +107,22 @@ func _on_body_entered(body: Node) -> void:
 	print("collision detected")
 	print(body)
 	pass # Replace with function body.
+
+func _on_ball_bounce(with):
+	#print("Ball bounce ", position)
+	var event_datas = {"position": position, "with":with, "velocity":linear_velocity.length()}
+	var my_data = {"event_type": "ball_bounce", "event_datas":event_datas }
+	NetworkManager.transfer_datas("evenement", my_data)
+	
+	pass
+
+
+func _on_area_2d_body_entered(body: Node2D) -> void:
+	if body.is_in_group("players"):
+		# Désactiver le RigidBody avant le rebond
+		#freeze = true
+		#collision_mask = 0
+		var player_key = body.player_key
+
+		print("Collision détectée par Area2D")
+		_on_ball_bounce(player_key)

@@ -40,6 +40,10 @@ func _spawn_bonus():
 func _on_bonus_ramasse(joueur_nom, bonus_type):
 	print("Bonus ", bonus_type, " ramassé par ", joueur_nom)
 	# Démarrer le timer pour respawn
+	var event_datas = {"bonus_type": bonus_type, "player_id":joueur_nom}
+	var my_data = {"event_type": "bonus_pick", "event_datas":event_datas }
+	NetworkManager.transfer_datas("evenement", my_data)
+	
 	timer_respawn.start()
 
 func _on_bonus_disparu():

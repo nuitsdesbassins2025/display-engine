@@ -39,7 +39,7 @@ func _process(delta):
 		move_player_to_click()
 
 func _on_move_player(id: String, target_position: Vector2):
-	print("ID : ", id, " spawned at : ", target_position)
+	# print("ID : ", id, " spawned at : ", target_position)
 	# Vérifie si le joueur existe déjà
 	if players.has(id):
 		# Le joueur existe, on le déplace
@@ -137,7 +137,7 @@ func draw_grid():
 		draw_line(Vector2(0, y), Vector2(viewport_size.x, y), grid_color, line_thickness)
 
 func move_player_to_click():
-	print("move")
+	#print("move")
 	var mouse_pos = get_global_mouse_position()
 	var viewport_size = get_viewport().get_visible_rect().size
 

@@ -1,7 +1,7 @@
 extends Node
 
 # A mettre en true si on veuc afficher le débug de TOUTES les actions
-var debbug_datas = true
+var debbug_datas = false
 
 ## Gestion principale du réseau et de la compensation de latence
 ## - Communication WebSocket
@@ -375,3 +375,24 @@ func get_historical_position(player_id, target_time):
 func send_data(data):
 	if websocket.get_ready_state() == WebSocketPeer.STATE_OPEN:
 		websocket.send_text(JSON.stringify(data))
+
+
+func transfer_datas(data_type: String, data: Dictionary) -> void:
+	print("Données reçues - Type: ", data_type, " Data: ", data)
+	# Traitez vos données ici
+	match data_type:
+		"evenement":
+			handle_event(data)
+		"message":
+				handle_message(data)
+		_:
+			print("Type de données inconnu: ", data_type)
+
+func handle_event(data: Dictionary) -> void:
+	print("event vers socket")
+	client.emit("godot_event", data)
+	pass
+
+func handle_message(data: Dictionary) -> void:
+	# Traitement des messages
+	pass
