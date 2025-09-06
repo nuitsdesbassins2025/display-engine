@@ -45,24 +45,36 @@ script = ExtResource("3_mfuhc")
 [node name="BallSpawner" parent="." instance=ExtResource("7_w2aae")]
 position = Vector2(632, 310)
 
-[node name="walls" type="StaticBody2D" parent="."]
+[node name="Wall_R" type="StaticBody2D" parent="."]
 collision_layer = 4
 collision_mask = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="walls"]
-position = Vector2(572.5, 662)
-shape = SubResource("RectangleShape2D_w2aae")
-
-[node name="CollisionShape2D2" type="CollisionShape2D" parent="walls"]
-position = Vector2(577, -10)
-shape = SubResource("RectangleShape2D_w2aae")
-
-[node name="CollisionShape2D3" type="CollisionShape2D" parent="walls"]
-position = Vector2(-13, 444)
+[node name="Wall_R" type="CollisionShape2D" parent="Wall_R"]
+position = Vector2(1166, 340)
 rotation = -1.57079
 shape = SubResource("RectangleShape2D_w2aae")
 
-[node name="CollisionShape2D4" type="CollisionShape2D" parent="walls"]
-position = Vector2(1166, 340)
+[node name="Wall_B" type="StaticBody2D" parent="."]
+collision_layer = 4
+collision_mask = 2
+
+[node name="Wall_B" type="CollisionShape2D" parent="Wall_B"]
+position = Vector2(572.5, 662)
+shape = SubResource("RectangleShape2D_w2aae")
+
+[node name="Wall_T" type="StaticBody2D" parent="."]
+collision_layer = 4
+collision_mask = 2
+
+[node name="Wall_T" type="CollisionShape2D" parent="Wall_T"]
+position = Vector2(577, -10)
+shape = SubResource("RectangleShape2D_w2aae")
+
+[node name="Wall_L" type="StaticBody2D" parent="."]
+collision_layer = 4
+collision_mask = 2
+
+[node name="Wall_L" type="CollisionShape2D" parent="Wall_L"]
+position = Vector2(-13, 444)
 rotation = -1.57079
 shape = SubResource("RectangleShape2D_w2aae")

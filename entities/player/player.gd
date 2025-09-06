@@ -1,12 +1,12 @@
 extends CharacterBody2D
 class_name Player
 
-## SIGNALS (simplifiés)
+## SIGNALS
 signal player_touche_objet(objet_nom)
 signal player_dans_zone(zone_nom)
 signal snake_mode_changed(active: bool)
 
-## EXPORTS (simplifiés)
+## EXPORTS
 @export_category("Player Identity")
 @export var player_id: int = -1:
 	set(value):
@@ -17,7 +17,6 @@ signal snake_mode_changed(active: bool)
 	set(value):
 		player_key = value
 		_update_player_key()
-
 
 @export_category("Appearance")
 @export var player_color: Color = Color.WHITE:
@@ -43,19 +42,15 @@ signal snake_mode_changed(active: bool)
 var gd_id: String = ""
 var client_id: String = ""
 var tracking_id: String = ""
-
 var is_tracked_player: bool = false
 var is_active: bool = true
 var health: int = max_health
 var ammo: int = max_ammo
-
 var is_shield_active: bool = false
 var can_use_shield: bool = true
-
 var inactivity_timer: Timer
 var last_position_update: float = 0.0
 var current_move_tween: Tween = null
-
 var actions_map: Dictionary = {}
 var viewport_size: Vector2
 
@@ -65,10 +60,12 @@ var viewport_size: Vector2
 @onready var shield: Polygon2D = $Shield/shield
 @onready var snake_trail: SnakeTrail = $SnakeTrail
 
-#region INITIALIZATION
+# ==============================================================================
+# INITIALIZATION
+# ==============================================================================
+
 func _ready():
 	viewport_size = get_viewport().get_visible_rect().size
-	
 	_setup_player()
 	_setup_inactivity_timer()
 	_setup_actions_map()
@@ -94,46 +91,46 @@ func _setup_actions_map():
 		"heal": _do_heal,
 		"move": _do_move
 	}
-#endregion
 
-#region SNAKE MODE (délégué à SnakeTrail)
-func _initialize_snake_mode():
-	if snake_trail:
-		snake_trail.trail_color = player_color
-		snake_trail.snake_size = 0.1
+# ==============================================================================
+# PUBLIC METHODS
+# ==============================================================================
 
-func _update_snake_mode():
-	snake_mode_changed.emit(snake_mode)
+func object_infos() -> Dictionary:
+	"""Renvoie les informations du joueur sous forme de dictionnaire"""
+	var infos = {
+		"name": "player",
+		"body_name": name,
+		"player_id": player_id,
+		"player_key": player_key,
+		"position": {"x": global_position.x, "y": global_position.y},
+		"rotation": rotation,
+		"speed": velocity.length(),
+		"health": health,
+		"max_health": max_health,
+		"ammo": ammo,
+		"max_ammo": max_ammo,
+		"color": {
+			"r": player_color.r,
+			"g": player_color.g,
+			"b": player_color.b,
+			"a": player_color.a
+		},
+		"snake_mode": snake_mode,
+		"is_active": is_active,
+		"is_shield_active": is_shield_active,
+		"is_tracked": is_tracked_player
+	}
 	
-	if snake_trail:
-		if snake_mode:
-			snake_trail.enable()
-		else:
-			snake_trail.disable()
-
-func agrandir_queue(value):
-	if snake_trail:
-		snake_trail.snake_size = min(snake_trail.snake_size + value, 1.0)
-#endregion
-
-#region PLAYER IDENTITY & APPEARANCE
-func _update_player_identity():
-	print("Player ID set to: ", player_id)
-
-func _update_player_key():
-	$TruckatedCircle.display_text = player_key
-	print("Player key set to: ", player_key)
-
-func _update_appearance():
-	if sprite:
-		sprite.modulate = player_color
+	# Ajouter les infos spécifiques au mode serpent
+	if snake_mode and snake_trail:
+		infos["snake_size"] = snake_trail.snake_size
+		infos["snake_segments"] = snake_trail.get_segment_count()
 	
-	if snake_trail:
-		snake_trail.trail_color = player_color
-#endregion
+	return infos
 
-#region MOVEMENT SYSTEM
 func move_to_position(target_position: Vector2):
+	"""Déplace le joueur vers une position cible"""
 	var actual_position = Vector2(
 		target_position.x / 100.0 * viewport_size.x,
 		target_position.y / 100.0 * viewport_size.y
@@ -146,12 +143,6 @@ func move_to_position(target_position: Vector2):
 	
 	var direction = (actual_position - global_position).normalized()
 	_update_player_orientation(direction)
-
-	#if global_position.distance_to(actual_position) < 10.0:
-		#global_position = actual_position
-		#if snake_mode and snake_trail:
-			#snake_trail.update_trail(global_position)
-		#return
 
 	if current_move_tween:
 		current_move_tween.kill()
@@ -167,30 +158,8 @@ func move_to_position(target_position: Vector2):
 	
 	current_move_tween.finished.connect(_on_move_finished)
 
-func _update_position_with_trail(new_position: Vector2):
-	global_position = new_position
-	if snake_trail:
-		snake_trail.update_trail(new_position, rotation)
-
-
-
-func _update_player_orientation(direction: Vector2):
-	if direction.length() > 0.1:
-		rotation = direction.angle()
-		sprite.rotation = rotation
-		# Mettre à jour la traînée avec la nouvelle rotation
-		if snake_mode and snake_trail:
-			snake_trail.update_trail(global_position, rotation)
-
-func _on_move_finished():
-	current_move_tween = null
-	if snake_mode and snake_trail:
-		snake_trail.update_trail(global_position, rotation)
-
-#endregion
-
-#region ACTIVITY SYSTEM
 func set_active(active: bool):
+	"""Active ou désactive le joueur"""
 	is_active = active
 	visible = active
 	set_physics_process(active)
@@ -199,25 +168,11 @@ func set_active(active: bool):
 	for child in get_children():
 		if child is CollisionShape2D or child is CollisionPolygon2D:
 			child.disabled = not active
-		# Ou si vous avez un nœud parent qui contient les collisionneurs
 		elif child is Node2D and child.has_method("set_collision_layer"):
-			child.set_collision_layer(0 if not active else 1)  # Ajustez le layer selon vos besoins
+			child.set_collision_layer(0 if not active else 1)
 
-	
-
-func check_inactivity():
-	var current_time = Time.get_unix_time_from_system()
-	if current_time - last_position_update > 10.0:
-		set_active(false)
-	else:
-		set_active(true)
-
-func _on_inactivity_timeout():
-	check_inactivity()
-#endregion
-
-#region SHIELD SYSTEM (inchangé)
 func trigger_shield():
+	"""Active le bouclier du joueur"""
 	if not can_use_shield:
 		return
 	
@@ -237,25 +192,106 @@ func trigger_shield():
 	
 	tween.tween_callback(_on_shield_animation_finished).set_delay(1.0)
 
-func _on_shield_animation_finished():
-	is_shield_active = false
-	get_tree().create_timer(shield_cooldown).timeout.connect(_reset_shield_cooldown)
+func agrandir_queue(value: float):
+	"""Agrandit la queue du serpent"""
+	if snake_trail:
+		snake_trail.snake_size = min(snake_trail.snake_size + value, 1.0)
 
-func _reset_shield_cooldown():
-	can_use_shield = true
-#endregion
-
-#region TRACKING SYSTEM (inchangé)
 func sync_tracking_client(track_id: String, cl_id: String, pos: Vector2):
+	"""Synchronise le joueur avec un client de tracking"""
 	tracking_id = track_id
 	client_id = cl_id
 	is_tracked_player = tracking_id != "" and client_id != ""
 	
 	if pos != Vector2.ZERO:
 		move_to_position(pos)
-#endregion
 
-#region ACTIONS SYSTEM (inchangé)
+# ==============================================================================
+# SNAKE MODE
+# ==============================================================================
+
+func _initialize_snake_mode():
+	if snake_trail:
+		snake_trail.trail_color = player_color
+		snake_trail.snake_size = 0.1
+
+func _update_snake_mode():
+	snake_mode_changed.emit(snake_mode)
+	
+	if snake_trail:
+		if snake_mode:
+			snake_trail.enable()
+		else:
+			snake_trail.disable()
+
+# ==============================================================================
+# APPEARANCE & IDENTITY
+# ==============================================================================
+
+func _update_player_identity():
+	print("Player ID set to: ", player_id)
+
+func _update_player_key():
+	$TruckatedCircle.display_text = player_key
+	print("Player key set to: ", player_key)
+
+func _update_appearance():
+	if sprite:
+		sprite.modulate = player_color
+	
+	if snake_trail:
+		snake_trail.trail_color = player_color
+
+# ==============================================================================
+# MOVEMENT SYSTEM
+# ==============================================================================
+
+func _update_position_with_trail(new_position: Vector2):
+	global_position = new_position
+	if snake_trail:
+		snake_trail.update_trail(new_position, rotation)
+
+func _update_player_orientation(direction: Vector2):
+	if direction.length() > 0.1:
+		rotation = direction.angle()
+		sprite.rotation = rotation
+		if snake_mode and snake_trail:
+			snake_trail.update_trail(global_position, rotation)
+
+func _on_move_finished():
+	current_move_tween = null
+	if snake_mode and snake_trail:
+		snake_trail.update_trail(global_position, rotation)
+
+# ==============================================================================
+# ACTIVITY SYSTEM
+# ==============================================================================
+
+func check_inactivity():
+	var current_time = Time.get_unix_time_from_system()
+	if current_time - last_position_update > 10.0:
+		set_active(false)
+	else:
+		set_active(true)
+
+func _on_inactivity_timeout():
+	check_inactivity()
+
+# ==============================================================================
+# SHIELD SYSTEM
+# ==============================================================================
+
+func _on_shield_animation_finished():
+	is_shield_active = false
+	get_tree().create_timer(shield_cooldown).timeout.connect(_reset_shield_cooldown)
+
+func _reset_shield_cooldown():
+	can_use_shield = true
+
+# ==============================================================================
+# ACTIONS SYSTEM
+# ==============================================================================
+
 func _do_shoot(data: Dictionary):
 	if ammo > 0:
 		ammo -= 1
@@ -268,9 +304,11 @@ func _do_heal(data: Dictionary):
 
 func _do_move(data: Dictionary):
 	pass
-#endregion
 
-#region PROCESS FUNCTIONS
+# ==============================================================================
+# INPUT HANDLING
+# ==============================================================================
+
 func _input(event):
 	if event is InputEventKey and event.pressed:
 		_handle_debug_input(event)
@@ -292,4 +330,3 @@ func _handle_debug_input(event: InputEventKey):
 		KEY_H:
 			if snake_trail:
 				snake_trail.segment_spacing = clamp(snake_trail.segment_spacing - 1, 2, 20)
-#endregion
