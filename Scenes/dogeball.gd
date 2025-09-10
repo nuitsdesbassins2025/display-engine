@@ -25,7 +25,9 @@ const PLAYER_SCENE = preload("res://entities/player/player.tscn")
 func _ready():
 	if NetworkManager.has_signal("move_player"):
 		NetworkManager.move_player.connect(_on_move_player)
-
+		
+	if NetworkManager.has_signal("client_action_trigger"):
+		NetworkManager.client_action_trigger.connect(_on_player_action)
 
 	spawn_ball()
 	queue_redraw()
@@ -37,10 +39,42 @@ func _draw():
 func _process(delta):
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		move_player_to_click()
+		
+
+func get_player_by_key(client_player_key):
+	print(client_player_key)
+	for player_key in players:
+		var player = players[player_key]
+		
+		if str(player.player_key) == str(int(client_player_key)):
+
+			print("On a une clée correspondante !")
+			return player
+
+	print("pas de clée trouvée", str(int(client_player_key)))
+	return null
+
+		
+func _on_player_action(client_id: String, client_datas:Dictionary, action: String, datas: Dictionary):
+	
+	
+	if action == "touch_screen":
+		var player_key = client_datas.get("player_id")
+		var player = get_player_by_key(player_key)
+	
+		if player != null :
+			player.trigger_shield()
+	
+
+
+
 
 func _on_move_player(id: String, target_position: Vector2):
 	# print("ID : ", id, " spawned at : ", target_position)
 	# Vérifie si le joueur existe déjà
+	
+
+	
 	if players.has(id):
 		# Le joueur existe, on le déplace
 		players[id].move_to_position(target_position)
@@ -75,7 +109,9 @@ func get_random_key() -> String:
 	while attempts < max_attempts:
 		# Générer 4 chiffres aléatoires
 		var key = ""
-		for i in range(4):
+		key += str(random.randi_range(1, 9))
+		
+		for i in range(3):
 			key += str(random.randi_range(0, 9))
 		
 		# Vérifier si la clé existe déjà

@@ -179,7 +179,7 @@ func trigger_shield():
 	is_shield_active = true
 	can_use_shield = false
 	
-	var collision_shape = $Shield/shield_collision
+	var collision_shape = $Shield/Area2D
 	var shield_visual = $Shield/shield
 	
 	var tween = create_tween()

@@ -13,7 +13,7 @@ signal player_connected(player_id)
 signal player_disconnected(player_id)
 signal position_received(player_id, position)
 signal action_received(player_id, action, timestamp)
-signal client_action_trigger(client_id: String, action: String, datas: Dictionary)
+signal client_action_trigger(client_id: String, client_datas:Dictionary, action: String, datas: Dictionary)
 
 signal move_player(player_id, target_position)
 
@@ -122,32 +122,44 @@ func _on_event_received(event: String, data: Variant, ns: String) -> void:
 	if event == "user_data":
 		# OK, tu es identifié
 		pass
-	if event == "action_triggered_by":
-		pass
-		print("Action déclenchée par serveur local 👍 :", data)
+	#if event == "action_triggered_by":
+		#pass
+		#print("Action déclenchée par serveur local 👍 :", data)
 		# fais ton traitement
+		
 	if event == "tracking_datas":
 		print("tracking data recues")
 		handle_tracking_datas(data[0][0])
+		
 			
 	if event == "client_action_trigger":
 		print("Action déclenchée par serveur local 👍 :", data)
+		data = data[0]
+		print(data)
 		
-		print(data[0])
-		var client_id = data[0].client_id
-		var action = data[0].action
-		var datas = data[0].datas
+		#A Remplacer par client_datas
+		var client_id = data.client_id
+		
+		var client_datas = data.client_datas
+		var action = data.action
+		var action_datas = data.datas
+		
+		var player_key = client_datas.player_id
+		
 		
 		if action == "client_move":
+			
+			
+			print(data)
 			
 			var datas_tacking = {
 				"tracking_fps": 9.84983032936065,
 				"tracking_datas": [
 					{
-					"tracking_id": datas.settings.player_id, 
+					"tracking_id": client_datas.player_id, 
 					"related_client_id": client_id, 
-					"posX": datas.x, 
-					"posY": datas.y, 
+					"posX": action_datas.x, 
+					"posY": action_datas.y, 
 					"state": "lost",
 					 "lost_frame": 164.0, 
 					"zone": "game" }
@@ -155,7 +167,8 @@ func _on_event_received(event: String, data: Variant, ns: String) -> void:
 				}
 			handle_tracking_datas(datas_tacking)
 		else :
-			client_action_trigger.emit(client_id, action, datas)
+			client_action_trigger.emit(client_id, client_datas, action, action_datas)
+			#emit_signal("player_action", )
 		
 		
 		

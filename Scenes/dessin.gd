@@ -40,7 +40,7 @@ func connect_signal():
 		NetworkManager.client_action_trigger.connect(_on_client_action_trigger)
 		print("Signal connecté avec succès")
 
-func _on_client_action_trigger(client_id:String, action: String, datas: Dictionary):
+func _on_client_action_trigger(client_id:String, client_datas:Dictionary, action: String, datas: Dictionary):
 	
 	print("client action in dessin scene")
 	

@@ -44,6 +44,7 @@ script = ExtResource("3_mfuhc")
 
 [node name="BallSpawner" parent="." instance=ExtResource("7_w2aae")]
 position = Vector2(632, 310)
+max_balls = 0
 
 [node name="Wall_R" type="StaticBody2D" parent="."]
 collision_layer = 4
