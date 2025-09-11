@@ -1,7 +1,7 @@
 extends Node
 
 # A mettre en true si on veuc afficher le débug de TOUTES les actions
-var debbug_datas = false
+var debbug_datas = true
 
 ## Gestion principale du réseau et de la compensation de latence
 ## - Communication WebSocket
@@ -33,70 +33,63 @@ var is_networked_game = true
 var client: SocketIO
 
 
-# Variables pour le debug
-var debug_timer: Timer
-var is_debug_active: bool = true
-
+## Variables pour le debug
+#var debug_timer: Timer
+#var is_debug_active: bool = true
 
 
 func _ready():
 	client = SocketIO.new()
 	add_child(client)
 	client.base_url = websocket_url
-	
-	
-	
 	client.socket_connected.connect(_on_socket_connected)
 	client.event_received.connect(_on_event_received)
 	client.connect_socket()
-	
-
-	
-	
-	setup_debug_timer()
-
-
-
-func setup_debug_timer():
-		# Crée le timer pour le debug
-	debug_timer = Timer.new()
-	debug_timer.wait_time = 1.0  # 1 seconde
-	debug_timer.one_shot = false
-	debug_timer.timeout.connect(_on_debug_timer_timeout)
-	add_child(debug_timer)
-
-	# Démarre automatiquement le debug (optionnel)
-	start_debug_mode()
-	
-	# Fonction pour démarrer le mode debug
-	
-func start_debug_mode():
-	if not is_debug_active:
-		is_debug_active = true
-		debug_timer.start()
-		print("Debug mode STARTED - Sending random signals every second")
-
-# Fonction pour arrêter le mode debug
-func stop_debug_mode():
-	if is_debug_active:
-		is_debug_active = false
-		debug_timer.stop()
-		print("Debug mode STOPPED")
-
-# Fonction appelée à chaque tick du timer
-func _on_debug_timer_timeout():
-	if is_debug_active:
-		_send_random_move_signal()
-		
-# Fonction pour envoyer un signal aléatoire
-func _send_random_move_signal():
-	var random_id = randi() % 5 + 1  # IDs de 1 à 5
-	var random_x = randf() * 1000.0  # X entre 0 et 1000
-	var random_y = randf() * 600.0   # Y entre 0 et 600
-	
-	var random_position = Vector2(random_x, random_y)
-
-	emit_move_player_signal(random_id, random_position)
+	#
+	#setup_debug_timer()
+#
+#
+#
+#func setup_debug_timer():
+		## Crée le timer pour le debug
+	#debug_timer = Timer.new()
+	#debug_timer.wait_time = 1.0  # 1 seconde
+	#debug_timer.one_shot = false
+	#debug_timer.timeout.connect(_on_debug_timer_timeout)
+	#add_child(debug_timer)
+#
+	## Démarre automatiquement le debug (optionnel)
+	#start_debug_mode()
+	#
+	## Fonction pour démarrer le mode debug
+	#
+#func start_debug_mode():
+	#if not is_debug_active:
+		#is_debug_active = true
+		#debug_timer.start()
+		#print("Debug mode STARTED - Sending random signals every second")
+#
+## Fonction pour arrêter le mode debug
+#func stop_debug_mode():
+	#if is_debug_active:
+		#is_debug_active = false
+		#debug_timer.stop()
+		#print("Debug mode STOPPED")
+#
+## Fonction appelée à chaque tick du timer
+#func _on_debug_timer_timeout():
+	#if is_debug_active:
+		#_send_random_move_signal()
+		#
+## Fonction pour envoyer un signal aléatoire
+#func _send_random_move_signal():
+	#var random_id = randi() % 5 + 1  # IDs de 1 à 5
+	#var random_x = randf() * 1000.0  # X entre 0 et 1000
+	#var random_y = randf() * 600.0   # Y entre 0 et 600
+	#
+	#var random_position = Vector2(random_x, random_y)
+#
+	#emit_move_player_signal(random_id, random_position)
 
 # Fonction pour émettre le signal (publique)
 func emit_move_player_signal(id: int, target_position: Vector2):
@@ -146,12 +139,8 @@ func _on_event_received(event: String, data: Variant, ns: String) -> void:
 		
 		var player_key = client_datas.player_id
 		
-		
 		if action == "client_move":
-			
-			
 			print(data)
-			
 			var datas_tacking = {
 				"tracking_fps": 9.84983032936065,
 				"tracking_datas": [
@@ -235,11 +224,8 @@ func handle_data(json_data):
 			#handle_player_action(data)
 
 func handle_tracking_datas(data):
-
 	var tracking_datas = data.get('tracking_datas', [])
-
 	for track_data in tracking_datas:
-
 		var tracking_position : Vector2 = Vector2(track_data['posX'], track_data['posY'])
 		var tracking_id : String = str(track_data['tracking_id'])
 		emit_signal("move_player", tracking_id, tracking_position)

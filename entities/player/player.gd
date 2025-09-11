@@ -49,7 +49,7 @@ var ammo: int = max_ammo
 var is_shield_active: bool = false
 var can_use_shield: bool = true
 var inactivity_timer: Timer
-var last_position_update: float = 0.0
+var last_player_action: float = 0.0
 var current_move_tween: Tween = null
 var actions_map: Dictionary = {}
 var viewport_size: Vector2
@@ -136,7 +136,7 @@ func move_to_position(target_position: Vector2):
 		target_position.y / 100.0 * viewport_size.y
 	)
 
-	last_position_update = Time.get_unix_time_from_system()
+	last_player_action = Time.get_unix_time_from_system()
 	
 	if not is_active:
 		set_active(true)
@@ -172,6 +172,10 @@ func set_active(active: bool):
 			child.set_collision_layer(0 if not active else 1)
 
 func trigger_shield():
+	
+	last_player_action = Time.get_unix_time_from_system()
+	if not is_active:
+		set_active(true)
 	"""Active le bouclier du joueur"""
 	if not can_use_shield:
 		return
@@ -269,7 +273,7 @@ func _on_move_finished():
 
 func check_inactivity():
 	var current_time = Time.get_unix_time_from_system()
-	if current_time - last_position_update > 10.0:
+	if current_time - last_player_action > 10.0:
 		set_active(false)
 	else:
 		set_active(true)
