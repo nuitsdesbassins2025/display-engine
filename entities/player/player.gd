@@ -162,6 +162,7 @@ func move_to_position(target_position: Vector2):
 
 	current_move_tween = create_tween()
 	var distance = global_position.distance_to(actual_position)
+	
 	var duration = clamp(distance / move_speed, 0.05, 0.3)
 	
 	if snake_mode and snake_trail:
@@ -261,13 +262,8 @@ func _update_appearance():
 	$TruckatedCircle.outer_radius = player_size
 	$TruckatedCircle.inner_radius = player_size - circle_thickness
 	$player_collision_shape.shape.radius = player_size
-	$TruckatedCircle.draw_shape()
-	
-	if sprite:
-		sprite.modulate = player_color
-	
-	if snake_trail:
-		snake_trail.trail_color = player_color
+	$TruckatedCircle.queue_redraw() 
+
 
 # ==============================================================================
 # MOVEMENT SYSTEM

@@ -66,7 +66,7 @@ func set_player_scale(settings):
 	for player_key in players:
 		
 		var player = players[player_key]
-		var new_size:int = settings.scale
+		var new_size:int = settings.get("scale")
 		print(new_size)
 		player.set_player_size(new_size)
 	#pass
