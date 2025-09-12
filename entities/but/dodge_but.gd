@@ -6,15 +6,34 @@ extends Area2D
 @export_enum("Gauche", "Droite", "Haut", "Bas") var position_cote: int = 0
 @export var marge: int = 50  # Marge depuis le bord
 
+@export var score: int = 0
+
+
 func _ready():
 	positionner_selon_cote()
 
 func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("big_balls"):
-		body.move_to_center()
-		pass # Replace with function body.
+		reset_ball(body)
+		goal()
+
+func reset_ball(body):
+	body.move_to_center()
 
 
+func goal():
+	score += 1
+	print("score : ", score)
+	var event_data = {
+		"but_position":position_cote,
+		"but_score":score
+	}
+	#$BallSpawner.ball_explosion( 20, 1000.0)
+
+	var my_data = {"event_type": "but", "event_datas": event_data}
+	NetworkManager.transfer_datas("evenement", my_data)
+	#NetworkPlayer.handle_event(event_data)
+	
 func positionner_selon_cote():
 	var viewport_size = get_viewport_rect().size
 	var object_size = calculer_taille_objet()

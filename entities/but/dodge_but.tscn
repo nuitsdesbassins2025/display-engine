@@ -1,22 +1,26 @@
-[gd_scene load_steps=4 format=3 uid="uid://dar88wmy8yjkd"]
+[gd_scene load_steps=6 format=3 uid="uid://dar88wmy8yjkd"]
 
 [ext_resource type="Script" uid="uid://bfsnv82prky1v" path="res://entities/but/dodge_but.gd" id="1_5j5ho"]
+[ext_resource type="PackedScene" uid="uid://bb201smsjb0ri" path="res://entities/mini ball/ball_spawner.tscn" id="2_2bbvg"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_v2wtd"]
-size = Vector2(31, 252)
+size = Vector2(50, 592)
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_5j5ho"]
 radius = 29.0
 height = 72.0
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5j5ho"]
+size = Vector2(23, 550)
+
 [node name="DodgeBut" type="Area2D"]
 collision_layer = 4
 collision_mask = 2
 script = ExtResource("1_5j5ho")
-marge = -5
+marge = -20
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(5.5, 0)
+position = Vector2(-121, 1)
 shape = SubResource("RectangleShape2D_v2wtd")
 
 [node name="Polygon2D" type="Polygon2D" parent="."]
@@ -29,13 +33,21 @@ position = Vector2(3, 155)
 rotation = -1.5708
 shape = SubResource("CapsuleShape2D_5j5ho")
 
-[node name="StaticBody2D" type="StaticBody2D" parent="."]
-collision_layer = 6
-collision_mask = 19
+[node name="CollisionShape2D" type="CollisionShape2D" parent="poteaux"]
+position = Vector2(-20.5, -420)
+shape = SubResource("RectangleShape2D_5j5ho")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="poteaux"]
+position = Vector2(-20.5, 432)
+shape = SubResource("RectangleShape2D_5j5ho")
+
+[node name="CollisionShape2D4" type="CollisionShape2D" parent="poteaux"]
 position = Vector2(3, -152)
 rotation = -1.5708
 shape = SubResource("CapsuleShape2D_5j5ho")
+
+[node name="BallSpawner" parent="." instance=ExtResource("2_2bbvg")]
+position = Vector2(-168, 0)
+max_balls = 0
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

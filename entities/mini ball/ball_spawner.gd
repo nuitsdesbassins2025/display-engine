@@ -61,6 +61,44 @@ func spawn_specific_ball(position: Vector2, size: float, color: Color):
 	current_balls += 1
 	ball_instance.tree_exiting.connect(_on_ball_removed.bind())
 
+func ball_explosion(ball_count: int = 10, explosion_force: float = 500.0):
+	"""Crée une explosion de balles depuis la position et rotation du spawner"""
+	var total_duration = 0.5  # 1/2 seconde totale
+	var spawn_delay = total_duration / ball_count
+	
+	# Utiliser la position et rotation du spawner
+	var spawn_position = global_position
+	var spawn_angle = $"..".rotation_degrees  # Angle en degrés du spawner
+	
+	for i in range(ball_count):
+		# Calculer l'angle avec variation (+/- 20°) par rapport à l'angle du spawner
+		var angle_variation = randf_range(-25.0, 25.0)
+		var final_angle = deg_to_rad(spawn_angle + angle_variation)
+		
+		# Créer la balle
+		var ball_instance = ball_scene.instantiate()
+		add_child(ball_instance)
+		
+		# Position au centre du spawner
+		ball_instance.global_position = spawn_position
+		
+		# Vitesse directionnelle avec force d'explosion
+		var direction = Vector2(cos(final_angle), sin(final_angle))
+		var force_variation = randf_range(0.7, 1.3)
+		
+		ball_instance.linear_velocity = direction * explosion_force * force_variation
+		
+		# Réduire la durée de vie pour les balles d'explosion
+		if ball_instance.has_method("set_lifetime"):
+			ball_instance.lifetime = randf_range(2.0, 5.0)
+		
+		current_balls += 1
+		ball_instance.tree_exiting.connect(_on_ball_removed.bind())
+		
+		# Attendre avant de spawner la prochaine balle
+		await get_tree().create_timer(spawn_delay).timeout
+
+
 # Optionnel : spawner avec un clic
 func _input(event):
 	if event is InputEventMouseButton and event.pressed:

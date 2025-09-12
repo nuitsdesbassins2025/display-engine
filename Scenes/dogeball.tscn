@@ -44,14 +44,13 @@ script = ExtResource("3_mfuhc")
 
 [node name="BallSpawner" parent="." instance=ExtResource("7_w2aae")]
 position = Vector2(632, 310)
-max_balls = 25
+max_balls = 3
 
 [node name="Wall_R" type="StaticBody2D" parent="."]
+visible = false
 collision_layer = 4
 collision_mask = 2
 script = ExtResource("8_p36c4")
-
-[node name="Node2D" type="Node2D" parent="."]
 
 [node name="DodgeBut" parent="." instance=ExtResource("8_hvv0g")]
 

@@ -16,14 +16,14 @@ func creer_murs_bords():
 	
 	# Positions et tailles des 4 murs
 	var murs = [
-		{ # Gauche
-			"size": Vector2(epaisseur_mur, viewport_size.y + epaisseur_mur * 2),
-			"position": Vector2(-epaisseur_mur/2 - decalage_exterieur, viewport_size.y/2)
-		},
-		{ # Droit
-			"size": Vector2(epaisseur_mur, viewport_size.y + epaisseur_mur * 2),
-			"position": Vector2(viewport_size.x + epaisseur_mur/2 + decalage_exterieur, viewport_size.y/2)
-		},
+		#{ # Gauche
+			#"size": Vector2(epaisseur_mur, viewport_size.y + epaisseur_mur * 2),
+			#"position": Vector2(-epaisseur_mur/2 - decalage_exterieur, viewport_size.y/2)
+		#},
+		#{ # Droit
+			#"size": Vector2(epaisseur_mur, viewport_size.y + epaisseur_mur * 2),
+			#"position": Vector2(viewport_size.x + epaisseur_mur/2 + decalage_exterieur, viewport_size.y/2)
+		#},
 		{ # Haut
 			"size": Vector2(viewport_size.x + epaisseur_mur * 2, epaisseur_mur),
 			"position": Vector2(viewport_size.x/2, -epaisseur_mur/2 - decalage_exterieur)

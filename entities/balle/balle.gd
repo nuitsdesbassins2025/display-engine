@@ -46,20 +46,20 @@ func _physics_process(delta):
 func _bounce_off_edges(viewport_size: Vector2):
 	var wall_proximity_threshold = 20.0  # Distance pour appliquer la répulsion
 	
-	# Bord gauche
-	if position.x - ball_radius < 0:
-		linear_velocity.x = abs(linear_velocity.x) * bounce_factor
-		position.x = ball_radius
-		_apply_proximity_repulsion(Vector2.RIGHT, viewport_size)
-		_on_ball_bounce("wall")
-	
-	# Bord droit
-	elif position.x + ball_radius > viewport_size.x:
-		linear_velocity.x = -abs(linear_velocity.x) * bounce_factor
-		position.x = viewport_size.x - ball_radius
-		_apply_proximity_repulsion(Vector2.LEFT, viewport_size)
-		_on_ball_bounce("wall")
-	
+	## Bord gauche
+	#if position.x - ball_radius < 0:
+		#linear_velocity.x = abs(linear_velocity.x) * bounce_factor
+		#position.x = ball_radius
+		#_apply_proximity_repulsion(Vector2.RIGHT, viewport_size)
+		#_on_ball_bounce("wall")
+	#
+	## Bord droit
+	#elif position.x + ball_radius > viewport_size.x:
+		#linear_velocity.x = -abs(linear_velocity.x) * bounce_factor
+		#position.x = viewport_size.x - ball_radius
+		#_apply_proximity_repulsion(Vector2.LEFT, viewport_size)
+		#_on_ball_bounce("wall")
+	#
 	# Bord haut
 	if position.y - ball_radius < 0:
 		linear_velocity.y = abs(linear_velocity.y) * bounce_factor
@@ -139,6 +139,7 @@ func _on_body_entered(body: Node) -> void:
 
 func _on_ball_bounce(with):
 	#print("Ball bounce ", position)
+	
 	var event_datas = {"position": position, "with":with, "velocity":linear_velocity.length()}
 	var my_data = {"event_type": "ball_bounce", "event_datas":event_datas }
 	NetworkManager.transfer_datas("evenement", my_data)

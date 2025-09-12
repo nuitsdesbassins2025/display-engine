@@ -395,7 +395,7 @@ func transfer_datas(data_type: String, data: Dictionary) -> void:
 		"evenement":
 			handle_event(data)
 		"message":
-				handle_message(data)
+			handle_message(data)
 		_:
 			print("Type de données inconnu: ", data_type)
 

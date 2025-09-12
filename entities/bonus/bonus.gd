@@ -6,8 +6,9 @@ signal bonus_ramasse(joueur_nom, bonus_type)
 @export var valeur: int = 10
 
 func _ready():
+	pass
 	# Détection quand un corps entre dans la zone
-	body_entered.connect(_on_body_entered)
+	# body_entered.connect(_on_body_entered)
 
 func _on_body_entered(body):
 	print("bonus body entered")
@@ -42,5 +43,5 @@ func _disparaitre():
 	
 	# Animation de disparition
 	var tween = create_tween()
-	tween.tween_property($Sprite2D, "scale", Vector2.ZERO, 0.3)
+	# tween.tween_property($Sprite2D, "scale", Vector2.ZERO, 0.3)
 	tween.tween_callback(queue_free)
