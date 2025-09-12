@@ -17,10 +17,15 @@ var players: Dictionary = {}
 @export var grid_color: Color = Color(0.3, 0.3, 0.3, 0.5)
 @export var background_color: Color = Color(0.01, 0.01, 0.01, 1.0)
 @export var line_thickness: float = 4
+@export var grid_display: bool = false
+
+
 
 # Précharge la scène de la balle
 const BALL_SCENE = preload("res://entities/balle/balle.tscn")
 const PLAYER_SCENE = preload("res://entities/player/player.tscn")
+
+@export var player_scale: float = 1.0
 
 func _ready():
 	if NetworkManager.has_signal("move_player"):
@@ -28,18 +33,44 @@ func _ready():
 		
 	if NetworkManager.has_signal("client_action_trigger"):
 		NetworkManager.client_action_trigger.connect(_on_player_action)
+		
+	if NetworkManager.has_signal("set_game_settings"):
+		NetworkManager.set_game_settings.connect(_on_set_game_settings)
 
 	spawn_ball()
 	queue_redraw()
 
 
 func _draw():
-	draw_grid()
+	draw_background()
 	
 func _process(delta):
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		move_player_to_click()
+
+func _on_set_game_settings(settings):
+	print("get the settings in game : ",settings)
+	
+	match settings.action:
+		"grid_toogle":
+			print("on déclenche le grid toogle")
+			toogle_grid()
+		"set_player_scale":
+			set_player_scale(settings.datas)
+	
+	
+
+func set_player_scale(settings):
+	print("set player scale déclenchée !!")
+	print(settings)
+	for player_key in players:
 		
+		var player = players[player_key]
+		var new_size:int = settings.scale
+		print(new_size)
+		player.set_player_size(new_size)
+	#pass
+
 
 func get_player_by_key(client_player_key):
 	print(client_player_key)
@@ -54,19 +85,25 @@ func get_player_by_key(client_player_key):
 	print("pas de clée trouvée", str(int(client_player_key)))
 	return null
 
-		
+
+
+
 func _on_player_action(client_id: String, client_datas:Dictionary, action: String, datas: Dictionary):
 	
-	
 	if action == "touch_screen":
+		
+		var player = null
 		var player_key = client_datas.get("player_id")
-		var player = get_player_by_key(player_key)
+		if player_key != "":
+			player = get_player_by_key(player_key)
 	
 		if player != null :
 			player.trigger_shield()
 	
 
-
+func toogle_grid():
+	grid_display = !grid_display
+	queue_redraw()  
 
 
 func _on_move_player(id: String, target_position: Vector2):
@@ -159,16 +196,20 @@ func _notification(what):
 		# Redessine quand la fenêtre change de taille
 		queue_redraw()
 		
-func draw_grid():
+func draw_background():
 	var viewport_size = get_viewport_rect().size
-	
-		# Dessine le fond
+	# Dessine le fond
 	draw_rect(Rect2(0, 0, viewport_size.x, viewport_size.y), background_color)
 	
+	if grid_display:
+		draw_grid()
+
+
+func draw_grid():
+	var viewport_size = get_viewport_rect().size
 	# Dessine les lignes verticales
 	for x in range(0, int(viewport_size.x) + 1, cell_size):
 		draw_line(Vector2(x, 0), Vector2(x, viewport_size.y), grid_color, line_thickness)
-	
 	# Dessine les lignes horizontales
 	for y in range(0, int(viewport_size.y) + 1, cell_size):
 		draw_line(Vector2(0, y), Vector2(viewport_size.x, y), grid_color, line_thickness)

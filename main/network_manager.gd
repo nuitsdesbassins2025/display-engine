@@ -15,6 +15,8 @@ signal position_received(player_id, position)
 signal action_received(player_id, action, timestamp)
 signal client_action_trigger(client_id: String, client_datas:Dictionary, action: String, datas: Dictionary)
 
+signal set_game_settings(settings)
+
 signal move_player(player_id, target_position)
 
 # Configuration
@@ -109,6 +111,8 @@ func _on_socket_connected(_namespace) -> void:
 
 func _on_event_received(event: String, data: Variant, ns: String) -> void:
 	
+	data = data[0]
+	
 	if debbug_datas == true:
 		print("Event DEBUG : ", event, " datas : ", data)
 	
@@ -119,15 +123,17 @@ func _on_event_received(event: String, data: Variant, ns: String) -> void:
 		#pass
 		#print("Action déclenchée par serveur local 👍 :", data)
 		# fais ton traitement
+	if event == "admin_game_settings":
+		handle_game_settings(data)
 		
 	if event == "tracking_datas":
 		print("tracking data recues")
-		handle_tracking_datas(data[0][0])
+		handle_tracking_datas(data)
 		
 			
 	if event == "client_action_trigger":
 		print("Action déclenchée par serveur local 👍 :", data)
-		data = data[0]
+		#data = data[0]
 		print(data)
 		
 		#A Remplacer par client_datas
@@ -222,6 +228,12 @@ func handle_data(json_data):
 			#handle_position_update(data)
 		#"player_action":
 			#handle_player_action(data)
+
+func handle_game_settings(data):
+	print("nm : envoi settings : ",data)
+	emit_signal("set_game_settings", data)
+	pass
+
 
 func handle_tracking_datas(data):
 	var tracking_datas = data.get('tracking_datas', [])

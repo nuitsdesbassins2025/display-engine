@@ -23,6 +23,16 @@ signal snake_mode_changed(active: bool)
 	set(value):
 		player_color = value
 		_update_appearance()
+@export var player_size: int = 60:
+	set(value):
+		player_size = value
+		_update_appearance()
+@export var player_scale: float = 1.0:
+	set(value):
+		player_scale = value
+		_update_appearance()
+@export var circle_thickness: int = 10
+	
 
 @export_category("Snake Mode")
 @export var snake_mode: bool = true:
@@ -37,6 +47,9 @@ signal snake_mode_changed(active: bool)
 
 @export_category("Movement")
 @export var move_speed: float = 400.0
+
+
+
 
 ## VARIABLES
 var gd_id: String = ""
@@ -183,15 +196,15 @@ func trigger_shield():
 	is_shield_active = true
 	can_use_shield = false
 	
-	var collision_shape = $Shield/Area2D
+	var shield_collision_shape = $Shield/Area2D
 	var shield_visual = $Shield/shield
 	
 	var tween = create_tween()
 	tween.set_parallel(true)
 	
-	tween.tween_property(collision_shape, "scale", Vector2(3.0, 3.0), 0.3)
+	tween.tween_property(shield_collision_shape, "scale", Vector2(3.0, 3.0), 0.3)
 	tween.tween_property(shield_visual, "scale", Vector2(3.0, 3.0), 0.3)
-	tween.tween_property(collision_shape, "scale", Vector2(1.0, 1.0), 0.7).set_delay(0.3)
+	tween.tween_property(shield_collision_shape, "scale", Vector2(1.0, 1.0), 0.7).set_delay(0.3)
 	tween.tween_property(shield_visual, "scale", Vector2(1.0, 1.0), 0.7).set_delay(0.3)
 	
 	tween.tween_callback(_on_shield_animation_finished).set_delay(1.0)
@@ -239,7 +252,17 @@ func _update_player_key():
 	$TruckatedCircle.display_text = player_key
 	print("Player key set to: ", player_key)
 
+
+func set_player_size(new_size:int):
+	player_size = new_size
+	_update_appearance()
+
 func _update_appearance():
+	$TruckatedCircle.outer_radius = player_size
+	$TruckatedCircle.inner_radius = player_size - circle_thickness
+	$player_collision_shape.shape.radius = player_size
+	$TruckatedCircle.draw_shape()
+	
 	if sprite:
 		sprite.modulate = player_color
 	

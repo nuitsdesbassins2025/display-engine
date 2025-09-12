@@ -19,10 +19,16 @@ var ball_datas_2 : Dictionary = {
 @export var wrap_around_edges: bool = true  # true = téléportation, false = rebond
 @export var wall_repulsion_strength: float = 0.5  # Force de répulsion des murs
 
+var original_collision_mask: int
+var original_collision_layer: int
+
+
 func _ready():
 	gravity_scale = 0
 	if linear_velocity == Vector2.ZERO:
 		_set_random_velocity()
+	original_collision_mask = collision_mask
+	original_collision_layer = collision_layer
 
 func _set_random_velocity():
 	var speed = randf_range(min_speed, max_speed)
@@ -68,7 +74,30 @@ func _bounce_off_edges(viewport_size: Vector2):
 		_apply_proximity_repulsion(Vector2.UP, viewport_size)
 		_on_ball_bounce("wall")
 	
+
 	
+func move_to_center():
+	var viewport_size = get_viewport_rect().size
+	
+	# Utiliser call_deferred pour éviter les conflits avec le moteur physique
+	call_deferred("_deferred_move_to_center", viewport_size)
+
+func _deferred_move_to_center(viewport_size: Vector2):
+	# Réinitialiser toutes les propriétés physiques
+	linear_velocity = Vector2.ZERO
+	angular_velocity = 0
+	constant_force = Vector2.ZERO
+	constant_torque = 0
+	
+	# Téléporter au centre
+	position = Vector2(viewport_size.x/2, viewport_size.y/2)
+	
+	# Réappliquer la physique au prochain frame
+	await get_tree().physics_frame
+	_set_random_velocity()
+	
+	print("déplace la balle au centre")
+
 
 func _apply_proximity_repulsion(direction: Vector2, viewport_size: Vector2):
 	# Calcule la distance au mur le plus proche

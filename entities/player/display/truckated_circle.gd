@@ -69,13 +69,15 @@ var background_circle: Polygon2D
 #var label: Label
 
 func _ready():
+	draw_shape()
+
+
+func draw_shape():
 	create_background_circle()
 	create_ring()
 	create_text_container()
 	update_ring()
 	update_text()
-
-
 
 func create_background_circle():
 	background_circle = Polygon2D.new()

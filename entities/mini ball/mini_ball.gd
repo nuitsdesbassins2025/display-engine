@@ -28,10 +28,25 @@ func randomize_ball():
 
 func set_size(size: float):
 	"""Définit la taille de la balle"""
+	
+	# Sauvegarder l'état de physique
+	var was_frozen = freeze
+	freeze = true
+	
+	# Modifier les properties
 	$CollisionShape2D.shape.radius = size
 	$TruckatedCircle.outer_radius = size
 	$TruckatedCircle.inner_radius = 0
 	$Area2D/CollisionShape2D.shape.radius = size + collision_threashold
+	
+	# Recréer les shapes
+	$CollisionShape2D.shape = $CollisionShape2D.shape.duplicate()
+	$Area2D/CollisionShape2D.shape = $Area2D/CollisionShape2D.shape.duplicate()
+	
+	# Restaurer l'état de physique
+	await get_tree().physics_frame
+	freeze = was_frozen
+
 
 func set_color(color: Color):
 	"""Définit la couleur de la balle"""

@@ -16,7 +16,7 @@ var trace_lines: Array = []
 func _ready():
 	
 	# Fond noir
-	generate_background()
+	#generate_background()
 	# Attendre que le NetworkManager soit prêt
 	call_deferred("connect_signal")
 	

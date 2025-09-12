@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://cghvi4og8rxyl" path="res://entities/player/snake.gd" id="4_bls4j"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_symyc"]
+radius = 50.0
 
 [node name="Player" type="CharacterBody2D" groups=["players"]]
 collision_mask = 30
@@ -18,7 +19,6 @@ script = ExtResource("4_bls4j")
 snake_segment_scene = ExtResource("2_abrql")
 
 [node name="player_collision_shape" type="CollisionShape2D" parent="."]
-scale = Vector2(5, 5)
 shape = SubResource("CircleShape2D_symyc")
 
 [node name="Shield" type="Node2D" parent="."]
