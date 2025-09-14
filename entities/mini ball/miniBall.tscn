@@ -8,7 +8,7 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_n0kcj"]
 
 [node name="MiniBall" type="RigidBody2D" groups=["mini_balls"]]
-collision_layer = 2
+collision_layer = 32
 collision_mask = 7
 gravity_scale = 0.0
 script = ExtResource("1_titbn")
@@ -25,7 +25,7 @@ display_text = ""
 
 [node name="Area2D" type="Area2D" parent="."]
 collision_layer = 0
-collision_mask = 7
+collision_mask = 23
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 shape = SubResource("CircleShape2D_n0kcj")

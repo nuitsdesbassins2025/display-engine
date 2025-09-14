@@ -124,18 +124,126 @@ func handle_trace(client_id: String, datas: Dictionary):
 		client_data.position = current_position
 		client_data.timestamp = current_time
 		return
-	
+
+	create_neon(client_data.position, current_position, datas.settings.color, 5 , 30)
 	# Dessiner la ligne entre l'ancienne et la nouvelle position
-	create_line(client_data.position, current_position, datas.settings.color, datas.settings.brushSize)
-	
+	#create_line(client_data.position, current_position, datas.settings.color, datas.settings.brushSize)
+	#create_neon_with_shader(client_data.position, current_position, datas.settings.color, datas.settings.brushSize)
 	# Mettre à jour les données
 	client_data.position = current_position
 	client_data.timestamp = current_time
 
 func is_trace_timed_out(current_time: int) -> bool:
 	return (current_time - last_trace_timestamp) > TRACE_TIMEOUT_MS
-
 	
+
+func create_neon(from: Vector2, to: Vector2, color_hex: String, line_thickness: int = 2, glow_size: float = 20.0):
+	var color = Color(color_hex)
+	
+	# Créer plusieurs couches de glow
+	var glow_layers = 4
+	for i in range(glow_layers):
+		var glow_line = Line2D.new()
+		glow_line.add_point(from)
+		glow_line.add_point(to)
+		# Les couches externes sont plus larges et plus transparentes
+		glow_line.width = line_thickness + glow_size * (1.0 - float(i) / glow_layers)
+		glow_line.default_color = color
+		glow_line.default_color.a = 0.15 * (1.0 - float(i) / glow_layers)
+		glow_line.antialiased = true
+		glow_line.z_index = 10 - i
+		
+		add_child(glow_line)
+		
+		# Animation séparée pour chaque couche de glow
+		var tween_glow = create_tween()
+		tween_glow.tween_interval(2.0)
+		tween_glow.tween_property(glow_line, "modulate:a", 0.0, 1.0)
+		tween_glow.tween_callback(glow_line.queue_free)
+	
+	# Ligne principale
+	var main_line = Line2D.new()
+	main_line.add_point(from)
+	main_line.add_point(to)
+	main_line.width = line_thickness
+	main_line.default_color = color
+	main_line.antialiased = true
+	main_line.z_index = 11
+	
+	add_child(main_line)
+	
+	# Animation de la ligne principale
+	var tween_main = create_tween()
+	tween_main.tween_interval(2.0)
+	tween_main.tween_property(main_line, "modulate:a", 0.0, 1.0)
+	tween_main.tween_callback(main_line.queue_free)
+	
+func create_neon_polygon(from: Vector2, to: Vector2, color_hex: String, line_thickness: int = 2, glow_size: float = 15.0):
+	var color = Color(color_hex)
+	var direction = (to - from).normalized()
+	var perpendicular = Vector2(-direction.y, direction.x)
+	
+	# Créer le glow avec Polygon2D
+	var glow_polygon = Polygon2D.new()
+	var glow_vertices = PackedVector2Array()
+	
+	# Points du polygone pour le glow
+	glow_vertices.push_back(from - perpendicular * glow_size)
+	glow_vertices.push_back(from + perpendicular * glow_size)
+	glow_vertices.push_back(to + perpendicular * glow_size)
+	glow_vertices.push_back(to - perpendicular * glow_size)
+	
+	glow_polygon.polygon = glow_vertices
+	glow_polygon.color = color
+	glow_polygon.color.a = 0.3
+	glow_polygon.z_index = -1
+	
+	add_child(glow_polygon)
+	
+	# Ligne principale
+	var main_line = Line2D.new()
+	main_line.add_point(from)
+	main_line.add_point(to)
+	main_line.width = line_thickness
+	main_line.default_color = color
+	main_line.antialiased = true
+	
+	add_child(main_line)
+	
+	# Animation
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_interval(2.0)
+	tween.tween_property(main_line, "modulate:a", 0.0, 1.0)
+	tween.tween_property(glow_polygon, "modulate:a", 0.0, 1.0)
+	tween.tween_callback(func(): 
+		if is_instance_valid(main_line): main_line.queue_free()
+		if is_instance_valid(glow_polygon): glow_polygon.queue_free()
+	)
+	
+func create_neon_with_shader(from: Vector2, to: Vector2, color_hex: String, line_thickness: int = 2):
+	var line = Line2D.new()
+	line.add_point(from)
+	line.add_point(to)
+	line.width = line_thickness
+	line.default_color = Color(color_hex)
+	line.antialiased = true
+	
+	# Appliquer le shader
+	var shader = preload("res://shaders/neon_line.gdshader")
+	var material = ShaderMaterial.new()
+	material.shader = shader
+	material.set_shader_parameter("glow_color", Color(color_hex))
+	line.material = material
+	
+	add_child(line)
+	trace_lines.append(line)
+	
+	# Animation (identique à votre version originale)
+	var tween = create_tween()
+	tween.tween_interval(2.0)
+	tween.tween_property(line, "modulate:a", 0.0, 1.0)
+	tween.tween_callback(_remove_line.bind(line))
 
 func create_line(from: Vector2, to: Vector2, color_hex: String, line_thickness:int = 2):
 	var line = Line2D.new()

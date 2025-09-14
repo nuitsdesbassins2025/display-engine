@@ -7,7 +7,12 @@ signal ball_bounce()
 @export var player_scene: PackedScene
 
 # Dictionnaire pour stocker les joueurs par leur ID
+# Player = objet joueur in game, tracking
 var players: Dictionary = {}
+
+# Dictionnaire pour stocker les clients par leurs ID
+# Clients = informations web, pseudo, couleur etc...
+var clients: Dictionary = {}
 
 @export var cell_size: int = 50:
 	set(value):
@@ -76,13 +81,21 @@ func get_player_by_key(client_player_key):
 	print(client_player_key)
 	for player_key in players:
 		var player = players[player_key]
-		
 		if str(player.player_key) == str(int(client_player_key)):
-
 			print("On a une clée correspondante !")
 			return player
-
 	print("pas de clée trouvée", str(int(client_player_key)))
+	return null
+
+
+func get_player_by_client_id(client_id):
+	print("look for client_id : ",client_id)
+	for player_key in players:
+		var player = players[player_key]
+		if str(player.client_id) == client_id:
+			print("On a une clée correspondante !")
+			return player
+	print("pas de client_id trouvé", str(int(client_id)))
 	return null
 
 
@@ -225,7 +238,50 @@ func move_player_to_click():
 	# Mapper Y entre 0 et 100
 	var mapped_y = (mouse_pos.y / viewport_size.y) * 100
 	_on_move_player("click_player",Vector2(mapped_x,mapped_y)) 
+
+
+
+func register_key(client_id, key):
+	var player_by_key = get_player_by_key(key)
+	var my_datas = {
+		"client_id": client_id,
+		"event_type" : "set_tracking",
+		"event_datas" : {
+			"tracking_status" : "error",
+			"tracking_code" : key
+			}
+		}
+		
+	if player_by_key :
+		player_by_key.client_id = client_id
+		my_datas["event_datas"]["tracking_status"] = "valid"
+
+	else :
+		var player_by_id = get_player_by_client_id(client_id)
+		if player_by_id :
+			player_by_id.unregister()
+		print("Clee non existante")
+		#my_datas["event_datas"]["status"] = "missing"
+		
+	NetworkManager.transfer_datas("info",my_datas)
+		
+	pass
+
+func set_player_pseudo(client_id, pseudo):
 	
+	var player = get_player_by_client_id(client_id)
+	if player :
+		player.pseudo = pseudo
+	else :
+		print("player non trouvé")
+		
+func set_player_color(client_id, color):
+	
+	var player = get_player_by_client_id(client_id)
+	if player :
+		player.player_color = color
+	else :
+		print("player non trouvé")
 
 func _input(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT :

@@ -40,6 +40,11 @@ var client: SocketIO
 #var is_debug_active: bool = true
 
 
+
+var game_scene: Node
+
+	
+
 func _ready():
 	client = SocketIO.new()
 	add_child(client)
@@ -47,64 +52,20 @@ func _ready():
 	client.socket_connected.connect(_on_socket_connected)
 	client.event_received.connect(_on_event_received)
 	client.connect_socket()
-	#
-	#setup_debug_timer()
-#
-#
-#
-#func setup_debug_timer():
-		## Crée le timer pour le debug
-	#debug_timer = Timer.new()
-	#debug_timer.wait_time = 1.0  # 1 seconde
-	#debug_timer.one_shot = false
-	#debug_timer.timeout.connect(_on_debug_timer_timeout)
-	#add_child(debug_timer)
-#
-	## Démarre automatiquement le debug (optionnel)
-	#start_debug_mode()
-	#
-	## Fonction pour démarrer le mode debug
-	#
-#func start_debug_mode():
-	#if not is_debug_active:
-		#is_debug_active = true
-		#debug_timer.start()
-		#print("Debug mode STARTED - Sending random signals every second")
-#
-## Fonction pour arrêter le mode debug
-#func stop_debug_mode():
-	#if is_debug_active:
-		#is_debug_active = false
-		#debug_timer.stop()
-		#print("Debug mode STOPPED")
-#
-## Fonction appelée à chaque tick du timer
-#func _on_debug_timer_timeout():
-	#if is_debug_active:
-		#_send_random_move_signal()
-		#
-## Fonction pour envoyer un signal aléatoire
-#func _send_random_move_signal():
-	#var random_id = randi() % 5 + 1  # IDs de 1 à 5
-	#var random_x = randf() * 1000.0  # X entre 0 et 1000
-	#var random_y = randf() * 600.0   # Y entre 0 et 600
-	#
-	#var random_position = Vector2(random_x, random_y)
-#
-	#emit_move_player_signal(random_id, random_position)
+	game_scene = get_tree().current_scene # ou get_node("/root/GameScene")
 
 # Fonction pour émettre le signal (publique)
 func emit_move_player_signal(id: int, target_position: Vector2):
 	move_player.emit(id, target_position)
 	print("DEBUG - Signal emitted: move_player(", id, ", ", target_position,")")
 
+
 # Fonction pour tester manuellement (utile pour le debug)
 func test_specific_move(id: int, target_position: Vector2):
 	emit_move_player_signal(id, target_position)
 
 
-	
-		
+
 func _on_socket_connected(_namespace) -> void:
 	client.emit("get_user_data", { "id": "id-godot" })
 	print("Connecté, envoi get_user_data")
@@ -129,6 +90,12 @@ func _on_event_received(event: String, data: Variant, ns: String) -> void:
 	if event == "tracking_datas":
 		print("tracking data recues")
 		handle_tracking_datas(data)
+		
+	if event == "web_client_updated":
+		
+		handle_client_datas(data)
+		
+		pass
 		
 			
 	if event == "client_action_trigger":
@@ -212,6 +179,30 @@ func process_websocket():
 	
 	elif state == WebSocketPeer.STATE_CLOSED:
 		print("Connexion fermée. Code: ", websocket.get_close_code(), " Raison: ", websocket.get_close_reason())
+
+func handle_client_datas(datas):
+	
+	print("data_client : ",datas)
+	var client_id = datas.get("client_id", "")
+	var client_datas = datas.get("datas", {})
+		# Vérifier les clés disponibles
+	var keys = client_datas.keys()
+
+	for key in keys :
+		match key:
+			"pseudo":
+				if game_scene and game_scene.has_method("set_player_pseudo"):
+					game_scene.set_player_pseudo(client_id, client_datas[key])
+			"color":
+				if game_scene and game_scene.has_method("set_player_color"):
+					game_scene.set_player_color(client_id, client_datas[key])
+			"tracking_code":
+				if game_scene and game_scene.has_method("register_key"):
+					game_scene.register_key(client_id, client_datas[key])
+
+
+
+
 
 ## Traitement des données reçues
 func handle_data(json_data):
@@ -396,6 +387,8 @@ func transfer_datas(data_type: String, data: Dictionary) -> void:
 			handle_event(data)
 		"message":
 			handle_message(data)
+		"info":
+			handle_info(data)
 		_:
 			print("Type de données inconnu: ", data_type)
 
@@ -406,4 +399,9 @@ func handle_event(data: Dictionary) -> void:
 
 func handle_message(data: Dictionary) -> void:
 	# Traitement des messages
+	pass
+	
+func handle_info(data: Dictionary) -> void:
+	
+	client.emit("godot_info", data)
 	pass

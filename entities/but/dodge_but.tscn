@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://dar88wmy8yjkd"]
+[gd_scene load_steps=7 format=3 uid="uid://dar88wmy8yjkd"]
 
 [ext_resource type="Script" uid="uid://bfsnv82prky1v" path="res://entities/but/dodge_but.gd" id="1_5j5ho"]
 [ext_resource type="PackedScene" uid="uid://bb201smsjb0ri" path="res://entities/mini ball/ball_spawner.tscn" id="2_2bbvg"]
@@ -12,6 +12,10 @@ height = 72.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5j5ho"]
 size = Vector2(23, 550)
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_2bbvg"]
+radius = 33.0
+height = 82.0
 
 [node name="DodgeBut" type="Area2D"]
 collision_layer = 4
@@ -49,5 +53,18 @@ shape = SubResource("CapsuleShape2D_5j5ho")
 [node name="BallSpawner" parent="." instance=ExtResource("2_2bbvg")]
 position = Vector2(-168, 0)
 max_balls = 0
+
+[node name="Poteaux_coll" type="Area2D" parent="."]
+collision_layer = 16
+
+[node name="CollisionShape2D5" type="CollisionShape2D" parent="Poteaux_coll"]
+position = Vector2(3, 155)
+rotation = -1.5708
+shape = SubResource("CapsuleShape2D_2bbvg")
+
+[node name="CollisionShape2D6" type="CollisionShape2D" parent="Poteaux_coll"]
+position = Vector2(3, -152)
+rotation = -1.5708
+shape = SubResource("CapsuleShape2D_2bbvg")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

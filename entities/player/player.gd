@@ -17,12 +17,23 @@ signal snake_mode_changed(active: bool)
 	set(value):
 		player_key = value
 		_update_player_key()
+		
+@export var client_id: String = "":
+	set(value):
+		client_id = value
+		_register_client_id()
+		
+@export var pseudo: String = "":
+	set(value):
+		pseudo = value
+		_register_pseudo()
+
 
 @export_category("Appearance")
 @export var player_color: Color = Color.WHITE:
 	set(value):
 		player_color = value
-		_update_appearance()
+		_register_color()
 @export var player_size: int = 60:
 	set(value):
 		player_size = value
@@ -49,12 +60,13 @@ signal snake_mode_changed(active: bool)
 @export var move_speed: float = 400.0
 
 
-
+var base_color: Color = Color(0.2, 0.2, 0.2)
 
 ## VARIABLES
 var gd_id: String = ""
-var client_id: String = ""
+
 var tracking_id: String = ""
+
 var is_tracked_player: bool = false
 var is_active: bool = true
 var health: int = max_health
@@ -87,6 +99,8 @@ func _ready():
 func _setup_player():
 	health = max_health
 	ammo = max_ammo
+	player_color = base_color
+	
 	_update_appearance()
 
 func _setup_inactivity_timer():
@@ -263,7 +277,37 @@ func _update_appearance():
 	$TruckatedCircle.inner_radius = player_size - circle_thickness
 	$player_collision_shape.shape.radius = player_size
 	$TruckatedCircle.queue_redraw() 
+	
+	
+func _register_client_id():
+	print("REGISTER CLIENT ID")
+	
+	
+	$TruckatedCircle.ring_color = Color(1.0, 1.0, 0)
+	
+	is_tracked_player = true	
 
+	$TruckatedCircle.queue_redraw() 
+	pass
+
+func _register_pseudo():
+	print("on met à jour le texte player")
+	print(pseudo)
+	$TruckatedCircle.display_text = pseudo
+	_update_appearance()
+	#$TruckatedCircle.queue_redraw() 
+
+func _register_color():
+	print("on met à jour la couleur player")
+	print(pseudo)
+	$TruckatedCircle.ring_color = player_color
+	_update_appearance()
+	#$TruckatedCircle.queue_redraw() 
+	
+func unregister():
+	$TruckatedCircle.display_text = player_key
+	$TruckatedCircle.ring_color = base_color
+	_update_appearance()
 
 # ==============================================================================
 # MOVEMENT SYSTEM

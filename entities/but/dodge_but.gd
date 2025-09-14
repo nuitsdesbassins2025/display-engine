@@ -28,7 +28,7 @@ func goal():
 		"but_position":position_cote,
 		"but_score":score
 	}
-	#$BallSpawner.ball_explosion( 20, 1000.0)
+	$BallSpawner.ball_explosion( 80, 1000.0)
 
 	var my_data = {"event_type": "but", "event_datas": event_data}
 	NetworkManager.transfer_datas("evenement", my_data)

@@ -41,7 +41,8 @@ big_balls="Les balles de jeux"
 2d_physics/layer_2="objects"
 2d_physics/layer_3="environment"
 2d_physics/layer_4="bonuses"
-2d_physics/layer_5="enemies"
+2d_physics/layer_5="murs decors"
+2d_physics/layer_6="deco"
 
 [rendering]
 

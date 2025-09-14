@@ -138,13 +138,18 @@ func _on_body_entered(body: Node) -> void:
 	pass # Replace with function body.
 
 func _on_ball_bounce(with):
-	#print("Ball bounce ", position)
-	
-	var event_datas = {"position": position, "with":with, "velocity":linear_velocity.length()}
-	var my_data = {"event_type": "ball_bounce", "event_datas":event_datas }
+
+	var my_data = {
+		"event_type": "ball_bounce",
+		"event_datas":{
+			"position": position,
+			"with":with,
+			"velocity":linear_velocity.length()
+			}
+		}
+		
 	NetworkManager.transfer_datas("evenement", my_data)
-	
-	pass
+
 
 
 func _on_area_2d_body_entered(body: Node2D) -> void:
