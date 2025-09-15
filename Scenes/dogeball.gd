@@ -42,7 +42,7 @@ func _ready():
 	if NetworkManager.has_signal("set_game_settings"):
 		NetworkManager.set_game_settings.connect(_on_set_game_settings)
 
-	#spawn_ball()
+	spawn_ball()
 	queue_redraw()
 
 
