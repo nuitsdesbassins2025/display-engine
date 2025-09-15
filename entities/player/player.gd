@@ -131,12 +131,14 @@ func _setup_actions_map():
 
 func object_infos() -> Dictionary:
 	"""Renvoie les informations du joueur sous forme de dictionnaire"""
+	var position = T.global_position_to_percentage(global_position)
 	var infos = {
 		"name": "player",
 		"body_name": name,
 		"player_id": player_id,
 		"player_key": player_key,
-		"position": {"x": global_position.x, "y": global_position.y},
+		"global_position":  global_position,
+		"position":position,
 		"rotation": rotation,
 		"speed": velocity.length(),
 		"health": health,
