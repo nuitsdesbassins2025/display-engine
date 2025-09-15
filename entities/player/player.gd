@@ -6,9 +6,13 @@ signal player_touche_objet(objet_nom)
 signal player_dans_zone(zone_nom)
 signal snake_mode_changed(active: bool)
 
+
+# Signal émis lorsque le player est sur le point d'être supprimé
+signal player_about_to_delete(player_instance, player_key)
+
 ## EXPORTS
 @export_category("Player Identity")
-@export var player_id: int = -1:
+@export var player_id: String = "" :
 	set(value):
 		player_id = value
 		_update_player_identity()
@@ -78,6 +82,8 @@ var last_player_action: float = 0.0
 var current_move_tween: Tween = null
 var actions_map: Dictionary = {}
 var viewport_size: Vector2
+
+var consecutive_lost:int = 0
 
 ## REFERENCES
 @onready var collision_shape: CollisionShape2D = $player_collision_shape
@@ -282,7 +288,6 @@ func _update_appearance():
 func _register_client_id():
 	print("REGISTER CLIENT ID")
 	
-	
 	$TruckatedCircle.ring_color = Color(1.0, 1.0, 0)
 	
 	is_tracked_player = true	
@@ -307,6 +312,7 @@ func _register_color():
 func unregister():
 	$TruckatedCircle.display_text = player_key
 	$TruckatedCircle.ring_color = base_color
+	client_id = ""
 	_update_appearance()
 
 # ==============================================================================
@@ -337,10 +343,57 @@ func _on_move_finished():
 func check_inactivity():
 	var current_time = Time.get_unix_time_from_system()
 	if current_time - last_player_action > 10.0:
+		consecutive_lost += 1
 		set_active(false)
+		if client_id != "":
+			var my_datas = {
+			"client_id": client_id,
+			"event_type" : "set_tracking",
+			"event_datas" : {
+				"tracking_status" : "lost",
+				"tracking_code" : player_key
+				}
+			}
+			NetworkManager.transfer_datas("info",my_datas)
+	
 	else:
 		set_active(true)
+		consecutive_lost = 0
+		if client_id != "":
+			var my_datas = {
+				"client_id": client_id,
+				"event_type" : "set_tracking",
+				"event_datas" : {
+					"tracking_status" : "valid",
+					"tracking_code" : player_key
+					}
+				}
+			NetworkManager.transfer_datas("info",my_datas)
+			
+	if (consecutive_lost > 2) :
+		delete_self()
+		
+# Fonction pour supprimer le player
+func delete_self():
+	print("Suppression du player: ", player_id)
+	
+	# 1. Émettre le signal avant la suppression
 
+	if client_id != "":
+		var my_datas = {
+			"client_id": client_id,
+			"event_type" : "set_tracking",
+			"event_datas" : {
+				"tracking_status" : "missing",
+				"tracking_code" : player_key
+				}
+			}
+		NetworkManager.transfer_datas("info",my_datas)
+	
+	emit_signal("player_about_to_delete", self, player_id)
+	# 2. Effectuer la suppression
+	queue_free()
+	
 func _on_inactivity_timeout():
 	check_inactivity()
 

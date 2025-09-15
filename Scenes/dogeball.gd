@@ -42,7 +42,7 @@ func _ready():
 	if NetworkManager.has_signal("set_game_settings"):
 		NetworkManager.set_game_settings.connect(_on_set_game_settings)
 
-	spawn_ball()
+	#spawn_ball()
 	queue_redraw()
 
 
@@ -126,12 +126,14 @@ func _on_move_player(id: String, target_position: Vector2):
 
 	
 	if players.has(id):
+		print("on déplace l'id : ",id)
 		# Le joueur existe, on le déplace
 		players[id].move_to_position(target_position)
 	else:
 		# Le joueur n'existe pas, on l'instancie
 		
 		_spawn_player(id, target_position)
+
 
 
 
@@ -146,9 +148,29 @@ func _spawn_player(id: String, spawn_position: Vector2):
 		
 		
 		print("Player ", id, " spawned at: ", spawn_position)
+		
+		
+				# Connecter le signal
+		if new_player.player_about_to_delete.connect(_on_player_about_to_delete) != OK:
+			push_error("Failed to connect player_about_to_delete signal")
 	else:
 		push_error("Player scene not assigned!")
 
+
+# Fonction appelée quand un player veut se supprimer
+func _on_player_about_to_delete(player_instance, player_id):
+	print("Signal reçu - suppression du player: ", player_id)
+	
+	# Retirer le player du dictionnaire
+	if players.has(player_id):
+		players.erase(player_id)
+		print("Player retiré du dictionnaire: ", player_id)
+	
+	# Optionnel: Vérifier que l'instance est toujours valide
+	if is_instance_valid(player_instance):
+		print("Instance toujours valide, suppression en cours...")
+		
+		
 func get_random_key() -> String:
 	var random = RandomNumberGenerator.new()
 	random.randomize()
