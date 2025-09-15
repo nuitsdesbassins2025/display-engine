@@ -165,6 +165,10 @@ func object_infos() -> Dictionary:
 	return infos
 
 func move_to_position(target_position: Vector2):
+	var position_txt = str(int(target_position.x)) + ":"+str(int(target_position.y))
+	$TruckatedCircle.display_text = position_txt
+	_update_appearance()
+
 	"""Déplace le joueur vers une position cible"""
 	var actual_position = Vector2(
 		target_position.x / 100.0 * viewport_size.x,
