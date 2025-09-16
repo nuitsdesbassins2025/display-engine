@@ -110,11 +110,14 @@ func set_physics_properties(size: float):
 
 func object_infos() -> Dictionary:
 	"""Renvoie les informations de l'objet sous forme de dictionnaire"""
+	var position_percentage = T.global_position_to_percentage(global_position)
+
 	return {
 		"name": "mini_ball",
 		"body_name": name,
 		"size": $CollisionShape2D.shape.radius,
-		"position": {"x": global_position.x, "y": global_position.y},
+		"position": position_percentage,
+		"global_position":global_position,
 		"speed": linear_velocity.length(),
 		"mass": mass,
 		"color": {

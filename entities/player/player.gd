@@ -131,12 +131,14 @@ func _setup_actions_map():
 
 func object_infos() -> Dictionary:
 	"""Renvoie les informations du joueur sous forme de dictionnaire"""
+	var position = T.global_position_to_percentage(global_position)
 	var infos = {
 		"name": "player",
 		"body_name": name,
 		"player_id": player_id,
 		"player_key": player_key,
-		"position": {"x": global_position.x, "y": global_position.y},
+		"global_position":  global_position,
+		"position":position,
 		"rotation": rotation,
 		"speed": velocity.length(),
 		"health": health,
@@ -163,6 +165,10 @@ func object_infos() -> Dictionary:
 	return infos
 
 func move_to_position(target_position: Vector2):
+	var position_txt = str(int(target_position.x)) + ":"+str(int(target_position.y))
+	$TruckatedCircle.display_text = position_txt
+	_update_appearance()
+
 	"""Déplace le joueur vers une position cible"""
 	var actual_position = Vector2(
 		target_position.x / 100.0 * viewport_size.x,
