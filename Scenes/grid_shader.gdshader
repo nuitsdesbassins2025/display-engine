@@ -7,17 +7,17 @@ uniform float line_width : hint_range(0.1, 10.0) = 1.0;
 
 void fragment() {
     vec2 uv = UV / TEXTURE_PIXEL_SIZE;
-    
+
     // Calcul des positions de grille
     vec2 grid_pos = floor(uv / cell_size);
     vec2 grid_uv = fract(uv / cell_size);
-    
+
     // Dessin des lignes
     vec2 line = smoothstep(vec2(line_width / cell_size), vec2(0.0), grid_uv);
     line += smoothstep(vec2(1.0 - line_width / cell_size), vec2(1.0), grid_uv);
-    
+
     float grid = max(line.x, line.y);
-    
+
     // Mélange entre couleur de grille et fond
     COLOR = mix(background_color, grid_color, grid);
 }

@@ -22,7 +22,7 @@ var clients: Dictionary = {}
 @export var grid_color: Color = Color(0.3, 0.3, 0.3, 0.5)
 @export var background_color: Color = Color(0.01, 0.01, 0.01, 1.0)
 @export var line_thickness: float = 4
-@export var grid_display: bool = false
+@export var grid_display: bool = true
 
 
 
@@ -243,11 +243,20 @@ func draw_background():
 func draw_grid():
 	var viewport_size = get_viewport_rect().size
 	# Dessine les lignes verticales
-	for x in range(0, int(viewport_size.x) + 1, cell_size):
-		draw_line(Vector2(x, 0), Vector2(x, viewport_size.y), grid_color, line_thickness)
+	#for x in range(0, int(viewport_size.x) + 1, cell_size):
+		#draw_line(Vector2(x, 0), Vector2(x, viewport_size.y), grid_color, line_thickness)
+	## Dessine les lignes horizontales
+	#for y in range(0, int(viewport_size.y) + 1, cell_size):
+		#draw_line(Vector2(0, y), Vector2(viewport_size.x, y), grid_color, line_thickness)
+	var divisitons = 4
+	for x in range(0, divisitons):
+		var steps = (viewport_size.x/4)*x
+		draw_line(Vector2(steps, 0), Vector2(steps, viewport_size.y), grid_color, line_thickness)
 	# Dessine les lignes horizontales
-	for y in range(0, int(viewport_size.y) + 1, cell_size):
-		draw_line(Vector2(0, y), Vector2(viewport_size.x, y), grid_color, line_thickness)
+	for y in range(0,divisitons):
+		var steps = (viewport_size.y/4)*y
+		draw_line(Vector2(0, steps), Vector2(viewport_size.x, steps), grid_color, line_thickness)
+		
 
 func move_player_to_click():
 	#print("move")
