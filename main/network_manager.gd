@@ -380,7 +380,8 @@ func send_data(data):
 
 
 func transfer_datas(data_type: String, data: Dictionary) -> void:
-	print("Données reçues - Type: ", data_type, " Data: ", data)
+	
+	# print("Données reçues - Type: ", data_type, " Data: ", data)
 	# Traitez vos données ici
 	match data_type:
 		"evenement":

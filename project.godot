@@ -35,6 +35,7 @@ enabled=PackedStringArray("res://addons/godot-socketio/plugin.cfg")
 [global_group]
 
 big_balls="Les balles de jeux"
+poteaux=""
 
 [layer_names]
 
