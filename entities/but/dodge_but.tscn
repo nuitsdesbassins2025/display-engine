@@ -6,16 +6,16 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_v2wtd"]
 size = Vector2(50, 592)
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_2bbvg"]
+radius = 33.0
+height = 82.0
+
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_5j5ho"]
 radius = 29.0
 height = 72.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5j5ho"]
 size = Vector2(23, 550)
-
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_2bbvg"]
-radius = 33.0
-height = 82.0
 
 [node name="DodgeBut" type="Area2D"]
 collision_layer = 4
@@ -30,20 +30,28 @@ shape = SubResource("RectangleShape2D_v2wtd")
 [node name="Polygon2D" type="Polygon2D" parent="."]
 polygon = PackedVector2Array(-10, -126, -10, -181, 17, -181, 33, -171, 39, -153, 37, -139, 26, -127, 12, -123, 0, -122, 0, 126, 20, 127, 35, 139, 39, 158, 31, 175, 16, 183, -11, 184)
 
+[node name="Poteaux_coll" type="Area2D" parent="." groups=["poteaux"]]
+collision_layer = 16
+collision_mask = 2
+
+[node name="CollisionShape2D5" type="CollisionShape2D" parent="Poteaux_coll" groups=["poteaux"]]
+position = Vector2(3, 155)
+rotation = -1.5708
+shape = SubResource("CapsuleShape2D_2bbvg")
+
+[node name="CollisionShape2D6" type="CollisionShape2D" parent="Poteaux_coll" groups=["poteaux"]]
+position = Vector2(3, -152)
+rotation = -1.5708
+shape = SubResource("CapsuleShape2D_2bbvg")
+
 [node name="poteaux" type="StaticBody2D" parent="."]
+collision_layer = 17
+collision_mask = 2
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="poteaux"]
 position = Vector2(3, 155)
 rotation = -1.5708
 shape = SubResource("CapsuleShape2D_5j5ho")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="poteaux"]
-position = Vector2(-20.5, -420)
-shape = SubResource("RectangleShape2D_5j5ho")
-
-[node name="CollisionShape2D3" type="CollisionShape2D" parent="poteaux"]
-position = Vector2(-20.5, 432)
-shape = SubResource("RectangleShape2D_5j5ho")
 
 [node name="CollisionShape2D4" type="CollisionShape2D" parent="poteaux"]
 position = Vector2(3, -152)
@@ -54,17 +62,16 @@ shape = SubResource("CapsuleShape2D_5j5ho")
 position = Vector2(-168, 0)
 max_balls = 0
 
-[node name="Poteaux_coll" type="Area2D" parent="."]
-collision_layer = 16
+[node name="back_wall" type="StaticBody2D" parent="."]
+collision_layer = 17
+collision_mask = 2
 
-[node name="CollisionShape2D5" type="CollisionShape2D" parent="Poteaux_coll"]
-position = Vector2(3, 155)
-rotation = -1.5708
-shape = SubResource("CapsuleShape2D_2bbvg")
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="back_wall"]
+position = Vector2(-20.5, 432)
+shape = SubResource("RectangleShape2D_5j5ho")
 
-[node name="CollisionShape2D6" type="CollisionShape2D" parent="Poteaux_coll"]
-position = Vector2(3, -152)
-rotation = -1.5708
-shape = SubResource("CapsuleShape2D_2bbvg")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="back_wall"]
+position = Vector2(-20.5, -420)
+shape = SubResource("RectangleShape2D_5j5ho")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

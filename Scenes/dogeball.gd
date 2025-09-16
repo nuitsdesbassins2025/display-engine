@@ -126,7 +126,7 @@ func _on_move_player(id: String, target_position: Vector2):
 
 	
 	if players.has(id):
-		print("on déplace l'id : ",id)
+		#print("on déplace l'id : ",id)
 		# Le joueur existe, on le déplace
 		players[id].move_to_position(target_position)
 	else:

@@ -153,11 +153,21 @@ func _on_ball_bounce(with):
 
 
 func _on_area_2d_body_entered(body: Node2D) -> void:
+	#print("Collision détectée par Area2D ici")
+	print(body.name)
+	if body.name =="poteaux":
+		_on_ball_bounce("poteaux")
+		
+	if body.name =="back_wall":
+		_on_ball_bounce("back_wall")
+		
 	if body.is_in_group("players"):
 		# Désactiver le RigidBody avant le rebond
 		#freeze = true
 		#collision_mask = 0
 		var player_key = body.player_key
 
-		print("Collision détectée par Area2D")
+		print("Collision détectée par Area2D ici")
 		_on_ball_bounce(player_key)
+	if body.is_in_group("poteaux"):
+		print("poteaux", body.name)
