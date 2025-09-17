@@ -68,7 +68,21 @@ func _on_set_game_settings(settings):
 			clear_all_drawings()
 		"toogle_player_text":
 			toogle_player_text()
+
+		"remove_big_balls":
+			remove_big_balls()
+		"spawn_ball":
+			spawn_ball()
 			
+			
+
+func remove_big_balls():
+	var balls = get_tree().get_nodes_in_group("balls")
+	
+	for ball in balls:
+		ball.queue_free()
+	
+	pass
 	
 func toogle_player_text():
 	for player_key in players:
@@ -183,7 +197,11 @@ func _on_player_about_to_delete(player_instance, player_id):
 	if is_instance_valid(player_instance):
 		print("Instance toujours valide, suppression en cours...")
 		
-		
+
+
+
+
+
 func get_random_key() -> String:
 	var random = RandomNumberGenerator.new()
 	random.randomize()

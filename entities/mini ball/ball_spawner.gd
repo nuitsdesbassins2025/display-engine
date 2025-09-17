@@ -17,9 +17,13 @@ func _ready():
 
 func start_spawning():
 	while true:
+		
 		if current_balls < max_balls:
 			spawn_ball()
+			
 		await get_tree().create_timer(spawn_interval).timeout
+
+
 
 func spawn_ball():
 	var ball_instance = ball_scene.instantiate()
