@@ -116,7 +116,8 @@ func handle_trace(client_id: String, datas: Dictionary, neon: bool = false):
 		return
 	
 	# Ajouter le point à la ligne existante
-	add_point_to_line(client_id, current_position, current_time)
+	if client_data.main_line :
+		add_point_to_line(client_id, current_position, current_time)
 
 func start_new_line(client_id: String, position: Vector2, timestamp: int, color_hex: String, neon: bool):
 	# Créer une nouvelle ligne continue avec effet néon
@@ -126,6 +127,7 @@ func start_new_line(client_id: String, position: Vector2, timestamp: int, color_
 	main_line.antialiased = true
 	main_line.z_index = 11
 	main_line.add_point(position)
+	main_line.add_to_group("drawings")
 	
 	var glow_lines = []
 	if neon :
@@ -171,6 +173,9 @@ func check_fading_segments(client_id: String, current_time: int):
 		return
 	
 	var points_to_remove = 0
+	
+	if not client_data.main_line :
+		return
 	
 	# Compter combien de points doivent disparaître (âgés de plus de 2 secondes)
 	for i in range(client_data.segment_timestamps.size()):
@@ -247,6 +252,9 @@ func complete_line(client_id: String):
 		return
 	
 	var client_data = client_trace_data[client_id]
+	
+	if not client_data.main_line :
+		return
 	
 	# Faire disparaître tous les segments restants
 	if client_data.main_line.get_point_count() > 0:

@@ -15,8 +15,10 @@ signal ball_expired  # Nouveau signal pour l'expiration
 
 func _ready():
 	randomize_ball()
+	z_index = 50
 	if lifetime > 0:
 		start_lifetime_timer()
+	
 
 func start_lifetime_timer():
 	# Démarrer un timer pour la durée de vie

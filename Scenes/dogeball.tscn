@@ -25,6 +25,8 @@ cell_size = 100
 grid_color = Color(1, 1, 1, 1)
 background_color = Color(0, 0, 0, 1)
 
+[node name="Dessin" parent="." instance=ExtResource("10_n73id")]
+
 [node name="Polygon2D" type="Polygon2D" parent="."]
 visible = false
 position = Vector2(364, 18)
@@ -42,7 +44,7 @@ script = ExtResource("3_mfuhc")
 
 [node name="BonusSpawner" parent="." instance=ExtResource("6_el1um")]
 
-[node name="BallSpawner" parent="." instance=ExtResource("7_w2aae")]
+[node name="BallSpawner" parent="." groups=["mini balls"] instance=ExtResource("7_w2aae")]
 position = Vector2(632, 310)
 max_balls = 3
 
@@ -56,5 +58,3 @@ script = ExtResource("8_p36c4")
 
 [node name="DodgeBut2" parent="." instance=ExtResource("8_hvv0g")]
 position_cote = 1
-
-[node name="Dessin" parent="." instance=ExtResource("10_n73id")]

@@ -29,6 +29,8 @@ func _ready():
 		_set_random_velocity()
 	original_collision_mask = collision_mask
 	original_collision_layer = collision_layer
+	
+	z_index = 100
 
 func _set_random_velocity():
 	var speed = randf_range(min_speed, max_speed)

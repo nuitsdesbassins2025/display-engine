@@ -63,6 +63,7 @@ signal player_about_to_delete(player_instance, player_key)
 @export_category("Movement")
 @export var move_speed: float = 400.0
 
+@export var debug_position = false
 
 var base_color: Color = Color(0.2, 0.2, 0.2)
 
@@ -101,6 +102,7 @@ func _ready():
 	_setup_inactivity_timer()
 	_setup_actions_map()
 	_initialize_snake_mode()
+	z_index = 40
 
 func _setup_player():
 	health = max_health
@@ -163,11 +165,24 @@ func object_infos() -> Dictionary:
 		infos["snake_segments"] = snake_trail.get_segment_count()
 	
 	return infos
+	
+func set_display_text(text:String):
+	$TruckatedCircle.display_text = text
+	_update_appearance()
+
+
 
 func move_to_position(target_position: Vector2):
-	var position_txt = str(int(target_position.x)) + ":"+str(int(target_position.y))
-	$TruckatedCircle.display_text = position_txt
-	_update_appearance()
+	
+	if debug_position:
+		var position_txt = str(int(target_position.x)) + ":"+str(int(target_position.y))
+		set_display_text(position_txt)
+	else :
+		if pseudo :
+			set_display_text(pseudo)
+		else :
+			set_display_text(player_key)
+
 
 	"""Déplace le joueur vers une position cible"""
 	var actual_position = Vector2(
@@ -276,7 +291,8 @@ func _update_player_identity():
 	print("Player ID set to: ", player_id)
 
 func _update_player_key():
-	$TruckatedCircle.display_text = player_key
+	
+	set_display_text(player_key)
 	print("Player key set to: ", player_key)
 
 
@@ -288,6 +304,7 @@ func _update_appearance():
 	$TruckatedCircle.outer_radius = player_size
 	$TruckatedCircle.inner_radius = player_size - circle_thickness
 	$player_collision_shape.shape.radius = player_size
+	
 	$TruckatedCircle.queue_redraw() 
 	
 	
@@ -304,9 +321,8 @@ func _register_client_id():
 func _register_pseudo():
 	print("on met à jour le texte player")
 	print(pseudo)
-	$TruckatedCircle.display_text = pseudo
-	_update_appearance()
-	#$TruckatedCircle.queue_redraw() 
+	set_display_text(pseudo)
+
 
 func _register_color():
 	print("on met à jour la couleur player")
@@ -316,7 +332,8 @@ func _register_color():
 	#$TruckatedCircle.queue_redraw() 
 	
 func unregister():
-	$TruckatedCircle.display_text = player_key
+	
+	set_display_text(player_key)
 	$TruckatedCircle.ring_color = base_color
 	client_id = ""
 	_update_appearance()

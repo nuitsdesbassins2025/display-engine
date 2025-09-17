@@ -22,6 +22,8 @@ T="*res://main/tools.gd"
 
 [display]
 
+window/size/mode=3
+window/size/initial_position_type=4
 window/size/borderless=true
 
 [dotnet]
@@ -36,6 +38,7 @@ enabled=PackedStringArray("res://addons/godot-socketio/plugin.cfg")
 
 big_balls="Les balles de jeux"
 poteaux=""
+mini_balls=""
 
 [layer_names]
 

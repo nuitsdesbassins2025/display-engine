@@ -158,7 +158,7 @@ func _on_event_received(event: String, data: Variant, ns: String) -> void:
 func _process(delta):
 	pass
 #	process_websocket()
-	#process_interpolation()
+
 	#process_actions()
 
 ## Initialisation de la connexion WebSocket
@@ -291,31 +291,6 @@ func handle_player_action(data):
 	
 	emit_signal("action_received", player_id, action, timestamp)
 
-## Interpolation des positions
-func process_interpolation():
-	var current_time = Time.get_ticks_msec()
-	
-	for player_id in interpolation_buffers:
-		var buffer = interpolation_buffers[player_id]
-		if buffer.size() < 2:
-			continue
-		
-		# Points d'interpolation
-		var from_point = buffer[-2]
-		var to_point = buffer[-1]
-		
-		# Calcul du ratio
-		var total_time = float(to_point.timestamp - from_point.timestamp)
-		var elapsed_time = current_time - from_point.timestamp
-		
-		var ratio = clamp(elapsed_time / total_time, 0.0, 1.0)
-		
-		# Interpolation
-		var interpolated_pos = from_point.position.lerp(to_point.position, ratio)
-		
-		# Mise à jour du joueur
-		if players.has(player_id) and is_instance_valid(players[player_id].node):
-			players[player_id].node.target_position = interpolated_pos
 
 ## Traitement des actions en buffer
 func process_actions():

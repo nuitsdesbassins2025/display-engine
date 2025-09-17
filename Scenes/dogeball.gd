@@ -62,7 +62,20 @@ func _on_set_game_settings(settings):
 			toogle_grid()
 		"set_player_scale":
 			set_player_scale(settings.datas)
+		"clear_balls":
+			clear_all_balls()
+		"clear_drawings":
+			clear_all_drawings()
+		"toogle_player_text":
+			toogle_player_text()
+			
 	
+func toogle_player_text():
+	for player_key in players:
+		var player = players[player_key]
+
+		player.debug_position = !player.debug_position
+		player._update_appearance()
 	
 
 func set_player_scale(settings):
@@ -123,7 +136,7 @@ func _on_move_player(id: String, target_position: Vector2):
 	# print("ID : ", id, " spawned at : ", target_position)
 	# Vérifie si le joueur existe déjà
 	
-
+	target_position = target_position/10
 	
 	if players.has(id):
 		#print("on déplace l'id : ",id)
@@ -264,10 +277,10 @@ func move_player_to_click():
 	var viewport_size = get_viewport().get_visible_rect().size
 
 	# Mapper X entre 0 et 100
-	var mapped_x = (mouse_pos.x / viewport_size.x) * 100
+	var mapped_x = (mouse_pos.x / viewport_size.x) * 1000
 
 	# Mapper Y entre 0 et 100
-	var mapped_y = (mouse_pos.y / viewport_size.y) * 100
+	var mapped_y = (mouse_pos.y / viewport_size.y) * 1000
 	_on_move_player("click_player",Vector2(mapped_x,mapped_y)) 
 
 
@@ -313,6 +326,21 @@ func set_player_color(client_id, color):
 		player.player_color = color
 	else :
 		print("player non trouvé")
+		
+func clear_all_balls():
+	# Récupérer toutes les balles du groupe "balls"
+	var balls = get_tree().get_nodes_in_group("mini_balls")
+	
+	for ball in balls:
+		ball.queue_free()
+	
+	print("Supprimé ", balls.size(), " balles")
+	
+func clear_all_drawings():
+	var drawings = get_tree().get_nodes_in_group("drawings")
+	
+	for drawing in drawings:
+		drawing.queue_free()
 
 func _input(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT :
@@ -332,6 +360,8 @@ func _input(event):
 				_on_move_player("player150",Vector2(10,10))
 				pass
 			KEY_E:
+				clear_all_balls()
+				clear_all_drawings()
 				pass
 			KEY_R:
 				pass

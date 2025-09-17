@@ -8,9 +8,24 @@ extends Area2D
 
 @export var score: int = 0
 
+var score_display_nodes: Array = []
+
 
 func _ready():
 	positionner_selon_cote()
+	score_display_nodes = [
+	
+		$"Scores/0",
+		$"Scores/1",
+		$"Scores/2",
+		$"Scores/3",
+		$"Scores/4",
+		$"Scores/5",
+		$"Scores/6",
+		$"Scores/7",
+		$"Scores/8",
+		$"Scores/9"
+	]
 
 func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("big_balls"):
@@ -29,11 +44,26 @@ func goal():
 		"but_score":score
 	}
 	$BallSpawner.ball_explosion( 80, 1000.0)
-
+	update_score_display()
+	#$Scores
+	#$"Scores/0" Polygon2D
+	#$"Scores/1"
+	#...
+	
 	var my_data = {"event_type": "but", "event_datas": event_data}
 	NetworkManager.transfer_datas("evenement", my_data)
 	#NetworkPlayer.handle_event(event_data)
+
+func update_score_display():
+	# Masquer tous les chiffres d'abord
+	for node in score_display_nodes:
+		node.visible = false
 	
+	# Afficher seulement le chiffre correspondant au score
+	if score < score_display_nodes.size():
+		score_display_nodes[score].visible = true
+		
+
 func positionner_selon_cote():
 	var viewport_size = get_viewport_rect().size
 	var object_size = calculer_taille_objet()
@@ -45,12 +75,17 @@ func positionner_selon_cote():
 		1:  # Droite
 			position = Vector2(viewport_size.x - marge - object_size.x / 2, viewport_size.y / 2)
 			rotation_degrees = 180
+			$Scores.rotation_degrees = 180
 		2:  # Haut
 			position = Vector2(viewport_size.x / 2, marge + object_size.y / 2)
 			rotation_degrees = 270
+			$Scores.rotation_degrees = 270
 		3:  # Bas
 			position = Vector2(viewport_size.x / 2, viewport_size.y - marge - object_size.y / 2)
 			rotation_degrees = 90
+			$Scores.rotation_degrees = 90
+	
+	
 
 func calculer_taille_objet() -> Vector2:
 	# Essaye de trouver la taille via différents composants
