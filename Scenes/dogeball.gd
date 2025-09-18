@@ -73,8 +73,19 @@ func _on_set_game_settings(settings):
 			remove_big_balls()
 		"spawn_ball":
 			spawn_ball()
+		"reset_all":
+			reset_scene()
 			
 			
+func reset_scene():
+	$DodgeBut.score = 0
+	$DodgeBut2.score = 0
+	clear_all_balls()
+	clear_all_drawings()
+	pass
+	
+	
+	
 # clear all balls
 func remove_big_balls():
 	var balls = get_tree().get_nodes_in_group("balls")
@@ -124,13 +135,13 @@ func get_player_by_client_id(client_id):
 
 func _on_player_action(client_id: String, client_datas:Dictionary, action: String, datas: Dictionary):
 	
-	if action == "touch_screen":
+	if action == "trigger_shield":
 		
 		var player = null
 		var player_key = client_datas.get("player_id")
 		if player_key != "":
 			player = get_player_by_key(player_key)
-	
+			
 		if player != null :
 			player.trigger_shield()
 	
@@ -238,15 +249,13 @@ func remove_player(id: int):
 		players[id].queue_free()
 		players.erase(id)
 		
-func spawn_ball():
+func spawn_ball(count:int=1):
+	
 	var ball = BALL_SCENE.instantiate()
 	ball.add_to_group("balls")  # Important pour que le joueur puisse trouver les balles
 	add_child(ball)
 	
-	ball.position = Vector2(
-		randf_range(50, get_viewport_rect().size.x - 50),
-		randf_range(50, get_viewport_rect().size.y - 50)
-	)
+	ball.move_to_center()
 	
 	var speed = randf_range(100, 300)
 	var direction = Vector2(randf_range(-1, 1), randf_range(-1, 1)).normalized()

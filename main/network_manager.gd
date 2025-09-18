@@ -1,7 +1,7 @@
 extends Node
 
 # A mettre en true si on veuc afficher le débug de TOUTES les actions
-var debbug_datas = true
+var debbug_datas = false
 
 ## Gestion principale du réseau et de la compensation de latence
 ## - Communication WebSocket

@@ -118,7 +118,8 @@ func _setup_player():
 func _setup_inactivity_timer():
 	inactivity_timer = Timer.new()
 	add_child(inactivity_timer)
-	inactivity_timer.wait_time = 10.0
+	
+	inactivity_timer.wait_time = 5.0
 	inactivity_timer.one_shot = false
 	inactivity_timer.timeout.connect(_on_inactivity_timeout)
 	inactivity_timer.start()
@@ -198,7 +199,7 @@ func move_to_position(target_position: Vector2):
 	
 	if not is_active:
 		set_active(true)
-	
+
 	var direction = (actual_position - global_position).normalized()
 	_update_player_orientation(direction)
 
@@ -218,6 +219,7 @@ func move_to_position(target_position: Vector2):
 	current_move_tween.finished.connect(_on_move_finished)
 
 func set_active(active: bool):
+	
 	"""Active ou désactive le joueur"""
 	is_active = active
 	visible = active
@@ -231,14 +233,12 @@ func set_active(active: bool):
 			child.set_collision_layer(0 if not active else 1)
 
 func trigger_shield():
-	
 	last_player_action = Time.get_unix_time_from_system()
 	if not is_active:
 		set_active(true)
 	"""Active le bouclier du joueur"""
 	if not can_use_shield:
 		return
-	
 	is_shield_active = true
 	can_use_shield = false
 	
@@ -257,9 +257,8 @@ func trigger_shield():
 	push_objects()
 
 
-var influence_radius = 400;
+var influence_radius = 200;
 var push_force = 100000
-
 
 func push_objects():
 	# Trouver tous les objets dans la zone d'influence
@@ -275,7 +274,7 @@ func push_objects():
 				var force = direction.normalized() * force_strength
 				
 				if body.is_in_group("big_balls"):
-					print("big ball touchée")
+					print("big ball touchée : ",force_strength)
 					
 					var event_data = {
 						"force":force_strength,
@@ -285,12 +284,12 @@ func push_objects():
 					}
 					
 					var my_data = {"event_type": "shield_push",
+					"client_id":client_id,
 					"event_datas": event_data}
 					NetworkManager.transfer_datas("evenement", my_data)
 				
 				# Calculer la force de poussée (plus forte quand plus proche)
 
-				
 				# Appliquer la force à l'objet selon son type
 				if body is RigidBody2D:
 					body.apply_central_force(force)
@@ -351,25 +350,19 @@ func _update_appearance():
 	$TruckatedCircle.outer_radius = player_size
 	$TruckatedCircle.inner_radius = player_size - circle_thickness
 	$player_collision_shape.shape.radius = player_size
-	
 	$TruckatedCircle.queue_redraw() 
-	
-	
+
+
 func _register_client_id():
 	print("REGISTER CLIENT ID")
-	
 	$TruckatedCircle.ring_color = Color(1.0, 1.0, 0)
-	
 	is_tracked_player = true	
-
 	$TruckatedCircle.queue_redraw() 
-	pass
 
 func _register_pseudo():
 	print("on met à jour le texte player")
 	print(pseudo)
 	set_display_text(pseudo)
-
 
 func _register_color():
 	print("on met à jour la couleur player")
@@ -428,56 +421,42 @@ func _on_move_finished():
 # ACTIVITY SYSTEM
 # ==============================================================================
 
+func send_activity_statu(statut:String):
+#	Envoi les notif uniquement pour les clients valide
+	if client_id != "":
+		var my_datas = {
+		"client_id": client_id,
+		"event_type" : "set_tracking",
+		"event_datas" : {
+			"tracking_status" : statut,
+			"tracking_code" : player_key
+			}
+		}
+		NetworkManager.transfer_datas("info",my_datas)
+	pass
+	
+
 func check_inactivity():
 	var current_time = Time.get_unix_time_from_system()
 	if current_time - last_player_action > 10.0:
 		consecutive_lost += 1
 		set_active(false)
-		if client_id != "":
-			var my_datas = {
-			"client_id": client_id,
-			"event_type" : "set_tracking",
-			"event_datas" : {
-				"tracking_status" : "lost",
-				"tracking_code" : player_key
-				}
-			}
-			NetworkManager.transfer_datas("info",my_datas)
-	
+		send_activity_statu("lost")
+
 	else:
 		set_active(true)
 		consecutive_lost = 0
-		if client_id != "":
-			var my_datas = {
-				"client_id": client_id,
-				"event_type" : "set_tracking",
-				"event_datas" : {
-					"tracking_status" : "valid",
-					"tracking_code" : player_key
-					}
-				}
-			NetworkManager.transfer_datas("info",my_datas)
-			
-	if (consecutive_lost > 2) :
-		delete_self()
+		send_activity_statu("valid")
 		
+	if (consecutive_lost > 2) :
+		send_activity_statu("missing")
+		delete_self()
+
 # Fonction pour supprimer le player
 func delete_self():
 	print("Suppression du player: ", player_id)
 	
 	# 1. Émettre le signal avant la suppression
-
-	if client_id != "":
-		var my_datas = {
-			"client_id": client_id,
-			"event_type" : "set_tracking",
-			"event_datas" : {
-				"tracking_status" : "missing",
-				"tracking_code" : player_key
-				}
-			}
-		NetworkManager.transfer_datas("info",my_datas)
-	
 	emit_signal("player_about_to_delete", self, player_id)
 	# 2. Effectuer la suppression
 	queue_free()
@@ -495,6 +474,14 @@ func _on_shield_animation_finished():
 
 func _reset_shield_cooldown():
 	can_use_shield = true
+	var my_datas = {
+		"client_id": client_id,
+		"event_type" : "shield_ready",
+		"event_datas":{
+			"shield_ready":true
+			}
+		}
+	NetworkManager.transfer_datas("info",my_datas)
 
 # ==============================================================================
 # ACTIONS SYSTEM

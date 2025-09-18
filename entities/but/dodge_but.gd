@@ -41,7 +41,8 @@ func goal():
 	print("score : ", score)
 	var event_data = {
 		"but_position":position_cote,
-		"but_score":score
+		"but_score":score,
+		"position":T.global_position_to_percentage(position)
 	}
 	$BallSpawner.ball_explosion( 80, 1000.0)
 	update_score_display()

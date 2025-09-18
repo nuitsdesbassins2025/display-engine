@@ -61,4 +61,5 @@ script = ExtResource("8_p36c4")
 position_cote = 1
 
 [node name="BlackHole" parent="." instance=ExtResource("11_nuwje")]
+visible = false
 position = Vector2(445, 354)
