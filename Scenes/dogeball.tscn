@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://dkusqq8p14qw7"]
+[gd_scene load_steps=12 format=3 uid="uid://dkusqq8p14qw7"]
 
 [ext_resource type="Script" uid="uid://d0f24a7th5hq3" path="res://Scenes/dogeball.gd" id="1_12k6n"]
 [ext_resource type="Script" uid="uid://bnpidkd3vcjo3" path="res://Scenes/grille.gd" id="1_t338q"]
@@ -10,7 +10,6 @@
 [ext_resource type="PackedScene" uid="uid://dar88wmy8yjkd" path="res://entities/but/dodge_but.tscn" id="8_hvv0g"]
 [ext_resource type="Script" uid="uid://bc5du853qtynx" path="res://Scenes/walls.gd" id="8_p36c4"]
 [ext_resource type="PackedScene" uid="uid://baqqiy27gdc7p" path="res://Scenes/dessin.tscn" id="10_n73id"]
-[ext_resource type="PackedScene" uid="uid://ca6bpkdvla2aq" path="res://entities/black_hole/black_hole.tscn" id="11_nuwje"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_mfuhc"]
 shader = ExtResource("2_u2e2k")
@@ -59,7 +58,3 @@ script = ExtResource("8_p36c4")
 
 [node name="DodgeBut2" parent="." instance=ExtResource("8_hvv0g")]
 position_cote = 1
-
-[node name="BlackHole" parent="." instance=ExtResource("11_nuwje")]
-visible = false
-position = Vector2(445, 354)
