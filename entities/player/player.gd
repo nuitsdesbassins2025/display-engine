@@ -259,6 +259,8 @@ func trigger_shield():
 
 var influence_radius = 400;
 var push_force = 100000
+
+
 func push_objects():
 	# Trouver tous les objets dans la zone d'influence
 	var bodies = get_tree().get_nodes_in_group("attractable")
@@ -269,13 +271,25 @@ func push_objects():
 			var distance = direction.length()
 			
 			if distance < influence_radius and distance > 0:
-
-				if body.is_in_group("big_balls"):
-					print("big ball touchée")
-				
-				# Calculer la force de poussée (plus forte quand plus proche)
 				var force_strength = push_force * (1.0 - distance / influence_radius)
 				var force = direction.normalized() * force_strength
+				
+				if body.is_in_group("big_balls"):
+					print("big ball touchée")
+					
+					var event_data = {
+						"force":force_strength,
+						"position":T.global_position_to_percentage(position),
+						"position_pixel":position,
+						"client_id":client_id
+					}
+					
+					var my_data = {"event_type": "shield_push",
+					"event_datas": event_data}
+					NetworkManager.transfer_datas("evenement", my_data)
+				
+				# Calculer la force de poussée (plus forte quand plus proche)
+
 				
 				# Appliquer la force à l'objet selon son type
 				if body is RigidBody2D:
