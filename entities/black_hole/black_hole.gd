@@ -140,23 +140,23 @@ func absorb_object(object):
 	create_ring_data()
 	
 	# Jouer un effet visuel
-	play_absorption_effect()
-
-func play_absorption_effect():
-	# Créer un effet d'onde de choc
-	var shockwave_radius = current_radius
-	var shockwave_color = Color(0.8, 0.9, 1.0, 0.5)
-	
-	# Animation simple de l'onde de choc
-	for i in range(5):
-		var tween = create_tween()
-		tween.tween_method(
-			func(r): 
-				draw_circle(Vector2.ZERO, r, shockwave_color),
-			shockwave_radius, 
-			shockwave_radius * 1.5, 
-			0.3
-		)
-		tween.tween_callback(
-			func(): pass
-		)
+	#play_absorption_effect()
+#
+#func play_absorption_effect():
+	## Créer un effet d'onde de choc
+	#var shockwave_radius = current_radius
+	#var shockwave_color = Color(0.8, 0.9, 1.0, 0.5)
+	#
+	## Animation simple de l'onde de choc
+	#for i in range(5):
+		#var tween = create_tween()
+		#tween.tween_method(
+			#func(r): 
+				#draw_circle(Vector2.ZERO, r, shockwave_color),
+			#shockwave_radius, 
+			#shockwave_radius * 1.5, 
+			#0.3
+		#)
+		#tween.tween_callback(
+			#func(): pass
+		#)

@@ -264,11 +264,15 @@ func push_objects():
 	var bodies = get_tree().get_nodes_in_group("attractable")
 	for body in bodies:
 		if body != self:
-			print("on repousse un objet !!")
+			
 			var direction = body.global_position - global_position  # Direction du centre vers l'extérieur
 			var distance = direction.length()
 			
 			if distance < influence_radius and distance > 0:
+
+				if body.is_in_group("big_balls"):
+					print("big ball touchée")
+				
 				# Calculer la force de poussée (plus forte quand plus proche)
 				var force_strength = push_force * (1.0 - distance / influence_radius)
 				var force = direction.normalized() * force_strength

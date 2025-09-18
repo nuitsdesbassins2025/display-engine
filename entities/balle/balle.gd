@@ -141,11 +141,13 @@ func _on_body_entered(body: Node) -> void:
 	pass # Replace with function body.
 
 func _on_ball_bounce(with):
-
+	print(position)
+	var percent_pos = T.global_position_to_percentage(position)
 	var my_data = {
 		"event_type": "ball_bounce",
 		"event_datas":{
-			"position": position,
+			"position": percent_pos,
+			"pixel_position": position,
 			"with":with,
 			"velocity":linear_velocity.length()
 			}

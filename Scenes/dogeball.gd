@@ -30,7 +30,7 @@ var clients: Dictionary = {}
 const BALL_SCENE = preload("res://entities/balle/balle.tscn")
 const PLAYER_SCENE = preload("res://entities/player/player.tscn")
 
-@export var player_scale: float = 1.0
+@export var player_scale: float = 50
 
 func _ready():
 	if NetworkManager.has_signal("move_player"):
@@ -75,33 +75,27 @@ func _on_set_game_settings(settings):
 			spawn_ball()
 			
 			
-
+# clear all balls
 func remove_big_balls():
 	var balls = get_tree().get_nodes_in_group("balls")
-	
 	for ball in balls:
 		ball.queue_free()
-	
-	pass
-	
+
+# Passe le texte des joueurs en position
 func toogle_player_text():
 	for player_key in players:
 		var player = players[player_key]
-
 		player.debug_position = !player.debug_position
 		player._update_appearance()
 	
 
 func set_player_scale(settings):
 	print("set player scale déclenchée !!")
-	print(settings)
+	player_scale = settings.get("scale")
+	
 	for player_key in players:
-		
 		var player = players[player_key]
-		var new_size:int = settings.get("scale")
-		print(new_size)
-		player.set_player_size(new_size)
-	#pass
+		player.set_player_size(player_scale)
 
 
 func get_player_by_key(client_player_key):
@@ -166,6 +160,7 @@ func _on_move_player(id: String, target_position: Vector2):
 
 func _spawn_player(id: String, spawn_position: Vector2):
 	if player_scene:
+		
 		var new_player = player_scene.instantiate()
 		new_player.player_id = id
 		new_player.global_position = spawn_position
@@ -173,6 +168,7 @@ func _spawn_player(id: String, spawn_position: Vector2):
 		add_child(new_player)
 		players[id] = new_player
 		
+		new_player.set_player_size(player_scale)
 		
 		print("Player ", id, " spawned at: ", spawn_position)
 		

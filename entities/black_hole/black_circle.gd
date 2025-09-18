@@ -8,7 +8,7 @@ func _ready():
 
 func _draw_black_circle(current_radius):
 	current_radius = current_radius
-	_draw()
+	
 	
 func _draw():
 	draw_circle(Vector2.ZERO, current_radius, Color(0, 0, 0, 1))
