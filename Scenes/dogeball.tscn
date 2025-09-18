@@ -1,22 +1,13 @@
-[gd_scene load_steps=12 format=3 uid="uid://dkusqq8p14qw7"]
+[gd_scene load_steps=9 format=3 uid="uid://dkusqq8p14qw7"]
 
 [ext_resource type="Script" uid="uid://d0f24a7th5hq3" path="res://Scenes/dogeball.gd" id="1_12k6n"]
-[ext_resource type="Script" uid="uid://bnpidkd3vcjo3" path="res://Scenes/grille.gd" id="1_t338q"]
 [ext_resource type="PackedScene" uid="uid://dr42r1hkdqa1n" path="res://entities/player/player.tscn" id="2_b65vx"]
-[ext_resource type="Shader" uid="uid://br8y86w3grvxi" path="res://Scenes/grid_shader.gdshader" id="2_u2e2k"]
-[ext_resource type="Script" uid="uid://odxlciy41kcu" path="res://Scenes/color_rect.gd" id="3_mfuhc"]
 [ext_resource type="PackedScene" uid="uid://c2c8dsu6yunsb" path="res://entities/bonus/BonusSpawner.tscn" id="6_el1um"]
 [ext_resource type="PackedScene" uid="uid://bb201smsjb0ri" path="res://entities/mini ball/ball_spawner.tscn" id="7_w2aae"]
 [ext_resource type="PackedScene" uid="uid://dar88wmy8yjkd" path="res://entities/but/dodge_but.tscn" id="8_hvv0g"]
+[ext_resource type="PackedScene" uid="uid://ca6bpkdvla2aq" path="res://entities/black_hole/black_hole.tscn" id="8_n73id"]
 [ext_resource type="Script" uid="uid://bc5du853qtynx" path="res://Scenes/walls.gd" id="8_p36c4"]
 [ext_resource type="PackedScene" uid="uid://baqqiy27gdc7p" path="res://Scenes/dessin.tscn" id="10_n73id"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_mfuhc"]
-shader = ExtResource("2_u2e2k")
-shader_parameter/grid_color = Color(0.3, 0.3, 0.3, 0.5)
-shader_parameter/background_color = Color(0.1, 0.1, 0.1, 1)
-shader_parameter/cell_size = 50.0
-shader_parameter/line_width = 1.0
 
 [node name="Dogeball" type="Node2D"]
 script = ExtResource("1_12k6n")
@@ -26,21 +17,6 @@ grid_color = Color(1, 1, 1, 1)
 background_color = Color(0, 0, 0, 1)
 
 [node name="Dessin" parent="." instance=ExtResource("10_n73id")]
-
-[node name="Polygon2D" type="Polygon2D" parent="."]
-visible = false
-position = Vector2(364, 18)
-color = Color(0.482353, 1, 1, 1)
-polygon = PackedVector2Array(102, 31, 77, 118, 298, 184, 308, 88, 207, 85)
-script = ExtResource("1_t338q")
-grid_color = Color(0.746916, 0.247448, 0.517901, 1)
-
-[node name="ColorRect" type="ColorRect" parent="."]
-visible = false
-material = SubResource("ShaderMaterial_mfuhc")
-offset_right = 224.0
-offset_bottom = 269.0
-script = ExtResource("3_mfuhc")
 
 [node name="BonusSpawner" parent="." instance=ExtResource("6_el1um")]
 
@@ -54,7 +30,11 @@ collision_layer = 4
 collision_mask = 2
 script = ExtResource("8_p36c4")
 
-[node name="DodgeBut" parent="." instance=ExtResource("8_hvv0g")]
+[node name="Node" type="Node" parent="."]
 
-[node name="DodgeBut2" parent="." instance=ExtResource("8_hvv0g")]
+[node name="DodgeBut2" parent="Node" instance=ExtResource("8_hvv0g")]
 position_cote = 1
+
+[node name="DodgeBut" parent="Node" instance=ExtResource("8_hvv0g")]
+
+[node name="BlackHole" parent="." instance=ExtResource("8_n73id")]

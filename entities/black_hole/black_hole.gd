@@ -1,7 +1,7 @@
 extends Node2D
 
 # Configuration
-@export var initial_radius: float = 50.0
+@export var initial_radius: float = 350.0
 @export var growth_per_object: float = 5.0
 @export var influence_radius: float = 300.0
 @export var attraction_force: float = 200.0
@@ -139,24 +139,13 @@ func absorb_object(object):
 	# Mettre à jour les données des anneaux
 	create_ring_data()
 	
-	# Jouer un effet visuel
-	#play_absorption_effect()
-#
-#func play_absorption_effect():
-	## Créer un effet d'onde de choc
-	#var shockwave_radius = current_radius
-	#var shockwave_color = Color(0.8, 0.9, 1.0, 0.5)
-	#
-	## Animation simple de l'onde de choc
-	#for i in range(5):
-		#var tween = create_tween()
-		#tween.tween_method(
-			#func(r): 
-				#draw_circle(Vector2.ZERO, r, shockwave_color),
-			#shockwave_radius, 
-			#shockwave_radius * 1.5, 
-			#0.3
-		#)
-		#tween.tween_callback(
-			#func(): pass
-		#)
+	var my_data = {
+		"event_type": "black_grow",
+		"event_datas":{
+			"objects_absorbed": objects_absorbed,
+			"radius":current_radius,
+			}
+		}
+		
+	NetworkManager.transfer_datas("evenement", my_data)
+	
