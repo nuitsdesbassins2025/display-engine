@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://ca6bpkdvla2aq"]
+
+[ext_resource type="Script" uid="uid://dy8xf8sbuolu8" path="res://entities/black_hole/black_hole.gd" id="1_yt7qt"]
+[ext_resource type="Script" uid="uid://uo7ekc34dve2" path="res://entities/black_hole/black_circle.gd" id="2_ytr03"]
+
+[node name="BlackHole" type="Node2D"]
+z_index = 20
+script = ExtResource("1_yt7qt")
+
+[node name="center" type="Node2D" parent="."]
+z_index = 100
+script = ExtResource("2_ytr03")

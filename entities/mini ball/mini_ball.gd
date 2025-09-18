@@ -13,12 +13,21 @@ var time_alive: float = 0.0
 signal ball_collision(other_ball: Node, impact_force: float)
 signal ball_expired  # Nouveau signal pour l'expiration
 
+var ball_color:Color
+
 func _ready():
+	add_to_group("attractable")
+	add_to_group("absobable")
 	randomize_ball()
 	z_index = 50
 	if lifetime > 0:
 		start_lifetime_timer()
-	
+
+
+# Nouvelle méthode pour éviter le conflit avec apply_force de RigidBody2D
+#func apply_attraction_force(force: Vector2):
+	#apply_central_force(force)
+
 
 func start_lifetime_timer():
 	# Démarrer un timer pour la durée de vie
@@ -103,6 +112,7 @@ func set_size(size: float):
 func set_color(color: Color):
 	"""Définit la couleur de la balle"""
 	$TruckatedCircle.ring_color = color
+	ball_color = color
 
 func set_physics_properties(size: float):
 	"""Définit les propriétés physiques de la balle"""

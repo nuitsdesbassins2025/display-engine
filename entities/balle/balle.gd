@@ -24,6 +24,7 @@ var original_collision_layer: int
 
 
 func _ready():
+	add_to_group("attractable")
 	gravity_scale = 0
 	if linear_velocity == Vector2.ZERO:
 		_set_random_velocity()

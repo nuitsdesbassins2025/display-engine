@@ -86,6 +86,10 @@ var viewport_size: Vector2
 
 var consecutive_lost:int = 0
 
+
+var target_rotation: float = 0.0
+var rotation_speed: float = 1.0  # Ajustez cette valeur pour contrôler la vitesse
+
 ## REFERENCES
 @onready var collision_shape: CollisionShape2D = $player_collision_shape
 @onready var sprite: Polygon2D = $player_skin
@@ -250,6 +254,31 @@ func trigger_shield():
 	tween.tween_property(shield_visual, "scale", Vector2(1.0, 1.0), 0.7).set_delay(0.3)
 	
 	tween.tween_callback(_on_shield_animation_finished).set_delay(1.0)
+	push_objects()
+
+
+var influence_radius = 400;
+var push_force = 100000
+func push_objects():
+	# Trouver tous les objets dans la zone d'influence
+	var bodies = get_tree().get_nodes_in_group("attractable")
+	for body in bodies:
+		if body != self:
+			print("on repousse un objet !!")
+			var direction = body.global_position - global_position  # Direction du centre vers l'extérieur
+			var distance = direction.length()
+			
+			if distance < influence_radius and distance > 0:
+				# Calculer la force de poussée (plus forte quand plus proche)
+				var force_strength = push_force * (1.0 - distance / influence_radius)
+				var force = direction.normalized() * force_strength
+				
+				# Appliquer la force à l'objet selon son type
+				if body is RigidBody2D:
+					body.apply_central_force(force)
+				elif body.has_method("apply_attraction_force"):
+					body.apply_attraction_force(force)
+
 
 func agrandir_queue(value: float):
 	"""Agrandit la queue du serpent"""
@@ -349,10 +378,28 @@ func _update_position_with_trail(new_position: Vector2):
 
 func _update_player_orientation(direction: Vector2):
 	if direction.length() > 0.1:
-		rotation = direction.angle()
+		# Définir la rotation cible
+		target_rotation = direction.angle()
+		
+		# Calculer la différence d'angle (en tenant compte du cercle trigonométrique)
+		var current_rot = fmod(rotation, TAU)
+		var target_rot = fmod(target_rotation, TAU)
+		
+		# Trouver le chemin le plus court pour la rotation
+		var diff = fmod(target_rot - current_rot + PI, TAU) - PI
+		if diff < -PI:
+			diff += TAU
+		
+		# Appliquer la rotation progressivement
+		rotation = current_rot + diff * min(rotation_speed * get_process_delta_time(), 1.0)
+		
+		# Mettre à jour le sprite
 		sprite.rotation = rotation
 		if snake_mode and snake_trail:
 			snake_trail.update_trail(global_position, rotation)
+
+
+
 
 func _on_move_finished():
 	current_move_tween = null
