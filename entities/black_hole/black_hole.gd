@@ -2,7 +2,7 @@ extends Node2D
 
 # Configuration
 @export var initial_radius: float = 50.0
-@export var growth_per_object: float = 5.0
+@export var growth_per_object: float = 0.50
 @export var influence_radius: float = 300.0
 @export var attraction_force: float = 200.0
 @export var rotation_speed: float = 20.0
@@ -80,7 +80,7 @@ func _process(delta):
 			grow_blackhole()
 		global_position = get_viewport().get_visible_rect().size / 2
 	
-	if objects_absorbed > 400 and scene_reset :
+	if objects_absorbed > 1000 and scene_reset :
 		scene_reset=false
 		get_tree().create_timer(10.0).timeout.connect(
 			func(): 
@@ -198,7 +198,8 @@ func absorb_object(object):
 		
 	NetworkManager.transfer_datas("evenement", my_data)
 	
-	if (objects_absorbed > 100) :
+	if (objects_absorbed > 1000) :
+		T.emit_godot_event("lost_control_endgame")
 		lost_control = true
 
 
@@ -208,8 +209,8 @@ func grow_blackhole():
 	objects_absorbed += 1
 	var grow = objects_absorbed * growth_per_object
 	
-	if objects_absorbed > 100 :
-		grow = 100 * growth_per_object + (objects_absorbed-100)*growth_per_object/8
+	if objects_absorbed > 1000 :
+		grow = 1000 * growth_per_object + (objects_absorbed-1000)*growth_per_object/8
 	
 	current_radius = initial_radius + grow
 	

@@ -29,3 +29,10 @@ func emit_player_event(client_id, event_name:String):
 	}
 	NetworkManager.transfer_datas("info",my_datas)
 	
+func emit_godot_event(event_type:String,event_datas:Dictionary={}):
+	var my_data = {
+	"event_type": event_type,
+	"event_datas":event_datas
+	}
+		
+	NetworkManager.transfer_datas("evenement", my_data)
