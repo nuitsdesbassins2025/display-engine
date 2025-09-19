@@ -154,7 +154,7 @@ func _on_ball_bounce(with):
 		}
 		
 	NetworkManager.transfer_datas("evenement", my_data)
-
+	
 
 
 func _on_area_2d_body_entered(body: Node2D) -> void:
@@ -172,7 +172,25 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 		#collision_mask = 0
 		var player_key = body.player_key
 
-		print("Collision détectée par Area2D ici")
 		_on_ball_bounce(player_key)
+		
+
+		if body.client_id != "":
+			print("client_id")
+			
+			var my_data2 = {
+				"event_type": "player_ball",
+				"client_id":body.client_id,
+				"event_datas":{
+					"pixel_position": position,
+					"position":T.global_position_to_percentage(position),
+					"velocity":linear_velocity.length()
+					}
+				}
+				
+			NetworkManager.transfer_datas("evenement", my_data2)
+		
+		
+		
 	if body.is_in_group("poteaux"):
 		print("poteaux", body.name)

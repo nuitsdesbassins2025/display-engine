@@ -1,7 +1,7 @@
 extends Node2D
 
 # Configuration
-@export var initial_radius: float = 350.0
+@export var initial_radius: float = 50.0
 @export var growth_per_object: float = 5.0
 @export var influence_radius: float = 300.0
 @export var attraction_force: float = 200.0
