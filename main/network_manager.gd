@@ -369,7 +369,7 @@ func transfer_datas(data_type: String, data: Dictionary) -> void:
 			print("Type de données inconnu: ", data_type)
 
 func handle_event(data: Dictionary) -> void:
-	print("event vers socket", data.event_type)
+	print("event vers socket :", data.event_type)
 	client.emit("godot_event", data)
 	pass
 

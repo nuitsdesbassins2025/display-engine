@@ -65,6 +65,10 @@ func update_score_display():
 		score_display_nodes[score].visible = true
 		
 
+func set_score(new_score:int):
+	score = new_score
+	update_score_display()
+	
 func positionner_selon_cote():
 	var viewport_size = get_viewport_rect().size
 	var object_size = calculer_taille_objet()

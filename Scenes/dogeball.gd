@@ -2,6 +2,8 @@ extends Node2D
 
 signal ball_bounce()
 
+var players_visible = true
+
 
 # Référence au prototype de joueur
 @export var player_scene: PackedScene
@@ -47,11 +49,16 @@ func _ready():
 
 
 func _draw():
+	
 	draw_background()
+
 	
 func _process(delta):
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		move_player_to_click()
+		
+	if !players_visible :
+		hide_players()
 
 func _on_set_game_settings(settings):
 	print("get the settings in game : ",settings)
@@ -73,19 +80,36 @@ func _on_set_game_settings(settings):
 			remove_big_balls()
 		"spawn_ball":
 			spawn_ball()
-		"reset_all":
+		"reset_game":
 			reset_scene()
-			
-			
+		"hide_players":
+			toggle_players_visibility()
+
+
 func reset_scene():
-	$DodgeBut.score = 0
-	$DodgeBut2.score = 0
+	$Node/DodgeBut2.set_score(0)
+	$Node/DodgeBut.set_score(0)
 	clear_all_balls()
 	clear_all_drawings()
-	pass
+	$BlackHole.reset_blackhole()
 	
+
+func toggle_players_visibility():
+	players_visible = !players_visible
+	print("players_viible = ",players_visible)
+	if players_visible:
+		for player_id in players:
+			players[player_id].show()
+	else : 
+		for player_id in players:
+			players[player_id].hide()
+
+func hide_players():
+	print("on cache les joueurs ?")
+	for player_id in players:
+		players[player_id].hide()
 	
-	
+
 # clear all balls
 func remove_big_balls():
 	var balls = get_tree().get_nodes_in_group("balls")
@@ -304,6 +328,7 @@ func move_player_to_click():
 
 	# Mapper Y entre 0 et 100
 	var mapped_y = (mouse_pos.y / viewport_size.y) * 1000
+	print(Vector2(mapped_x,mapped_y))
 	_on_move_player("click_player",Vector2(mapped_x,mapped_y)) 
 
 
@@ -380,7 +405,7 @@ func _input(event):
 				pass
 			KEY_Z:
 				
-				_on_move_player("player150",Vector2(10,10))
+				_on_move_player("player150",Vector2(500,500))
 				pass
 			KEY_E:
 				clear_all_balls()

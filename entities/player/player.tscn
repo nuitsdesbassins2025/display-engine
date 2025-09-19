@@ -12,7 +12,6 @@ radius = 50.0
 collision_mask = 30
 motion_mode = 1
 script = ExtResource("1_symyc")
-snake_mode = false
 
 [node name="SnakeTrail" type="Node2D" parent="."]
 script = ExtResource("4_bls4j")
