@@ -164,11 +164,18 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 	
 	# Émettre le signal
 	ball_collision.emit(body, impact_force)
-	
+	var with = body.name
+	if body.is_in_group("mini_balls"):
+		with = "mini_balls"
+	if body.is_in_group("big_balls"):
+		with = "big_balls"
+	if body.is_in_group("players"):
+		with = "players"
 	# Préparer les données d'événement
+	
 	var event_datas = {
 		"ball1": object_infos(),
-		"collide_with": body.name,
+		"collide_with": with,
 		"impact_force": impact_force,
 		"position1": {"x": global_position.x, "y": global_position.y},
 		"position2": {"x": body.global_position.x, "y": body.global_position.y},
