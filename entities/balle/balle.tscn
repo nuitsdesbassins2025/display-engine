@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://df1x7k5g75tum"]
+[gd_scene load_steps=5 format=3 uid="uid://df1x7k5g75tum"]
 
-[ext_resource type="Script" uid="uid://cywhw6oogt41j" path="res://entities/balle/balle.gd" id="1_2ir51"]
+[ext_resource type="Script" path="res://entities/balle/balle.gd" id="1_2ir51"]
+[ext_resource type="Script" path="res://entities/balle/polygon_2d.gd" id="2_f35sm"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_2ir51"]
 
@@ -22,6 +23,7 @@ shape = SubResource("CircleShape2D_2ir51")
 position = Vector2(0, -0.4)
 color = Color(0.309804, 1, 1, 1)
 polygon = PackedVector2Array(-0.4, -49.6, 13.8, -47.6, 29.8, -40, 45.4, -20.4, 48.2, -11.2, 50.2176, -3.9513, 48, 8.8, 38.8, 29, 30, 38.8, 16.4, 46.2, 2.6, 48.8, -12.6, 48.6, -26.2, 42, -38.2, 31.6, -51, 0.6, -41.4, -28.2, -21.2, -45.4)
+script = ExtResource("2_f35sm")
 
 [node name="Area2D" type="Area2D" parent="."]
 
