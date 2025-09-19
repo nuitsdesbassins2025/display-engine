@@ -13,8 +13,8 @@ var objects_absorbed: int = 0
 var ring_data = []  # Stocke les données pour chaque anneau: [radius, color, offset]
 
 
-@export var max_speed: float = 40.0
-@export var min_speed: float = 10.0
+@export var max_speed: float = 60.0
+@export var min_speed: float = 20.0
 @export var object_radius: float = 20.0
 @export var direction_change_interval: float = 1.5
 @export var speed_variation: float = 0.3

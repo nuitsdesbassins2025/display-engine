@@ -22,15 +22,7 @@ var ball_datas_2 : Dictionary = {
 var original_collision_mask: int
 var original_collision_layer: int
 
-@export var ball_color: Color = Color(1, 0, 0)
-@export var ball_size: float = 50.0
-@export_range(1, 10) var ball_intensity: int = 5
 
-var circle_texture: ImageTexture
-var halo_texture: ImageTexture
-
-	
-	
 func _ready():
 	add_to_group("attractable")
 	gravity_scale = 0
@@ -40,8 +32,6 @@ func _ready():
 	original_collision_layer = collision_layer
 	
 	z_index = 100
-	generate_textures()
-	queue_redraw()
 
 func _set_random_velocity():
 	var speed = randf_range(min_speed, max_speed)
@@ -200,120 +190,3 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 		
 	if body.is_in_group("poteaux"):
 		print("poteaux", body.name)
-
-
-
-func _draw():
-	# Dessiner le halo en premier (en dessous)
-	if halo_texture:
-		draw_texture(halo_texture, -halo_texture.get_size() / 2)
-	
-	# Dessiner le cercle principal
-	if circle_texture:
-		draw_texture(circle_texture, -circle_texture.get_size() / 2)
-
-func generate_textures():
-	circle_texture = generate_circle_texture(ball_size, ball_color)
-	halo_texture = generate_halo_texture(ball_size * 1.5, ball_color, ball_intensity)
-
-func generate_circle_texture(size: float, color: Color) -> ImageTexture:
-	var image = Image.create(int(size * 2), int(size * 2), false, Image.FORMAT_RGBA8)
-	var center = Vector2(size, size)
-	
-	for x in range(image.get_width()):
-		for y in range(image.get_height()):
-			var pos = Vector2(x, y)
-			var distance = pos.distance_to(center)
-			
-			if distance <= size:
-				var alpha = 1.0
-				if distance > size - 2:
-					alpha = (size - distance) / 2.0
-				
-				image.set_pixel(x, y, Color(color.r, color.g, color.b, alpha))
-	
-	return ImageTexture.create_from_image(image)
-
-func generate_halo_texture(size: float, color: Color, intensity: int) -> ImageTexture:
-	var halo_size = size * (1.0 + intensity * 0.1)
-	var image = Image.create(int(halo_size * 2), int(halo_size * 2), false, Image.FORMAT_RGBA8)
-	var center = Vector2(halo_size, halo_size)
-	
-	for x in range(image.get_width()):
-		for y in range(image.get_height()):
-			var pos = Vector2(x, y)
-			var distance = pos.distance_to(center)
-			var max_radius = halo_size
-			
-			if distance <= max_radius:
-				var normalized_dist = distance / max_radius
-				var alpha = (1.0 - normalized_dist) * (intensity * 0.1)
-				alpha = clamp(alpha, 0, 0.8)
-				
-				image.set_pixel(x, y, Color(color.r, color.g, color.b, alpha))
-	
-	return ImageTexture.create_from_image(image)
-
-# Fonction pour régler l'intensité du halo (permanent)
-func set_ball_intensity(intensity: int):
-	ball_intensity = clamp(intensity, 1, 10)
-	generate_textures()
-	queue_redraw()
-
-# Fonction pour déclencher un effet visuel court
-func ball_effect():
-	# Animation d'échelle (pulse)
-	var original_scale = scale
-	var tween = create_tween()
-	tween.set_parallel(true)
-	
-	# Effet de pulse
-	tween.tween_property(self, "scale", original_scale * 1.3, 0.1)
-	tween.tween_property(self, "scale", original_scale, 0.3).set_delay(0.1)
-	
-	# Effet de luminosité
-	var original_modulate = modulate
-	tween.tween_property(self, "modulate", original_modulate * 2.0, 0.1)
-	tween.tween_property(self, "modulate", original_modulate, 0.3).set_delay(0.1)
-	
-	# Effet de halo temporaire (plus intense pendant l'effet)
-	var original_intensity = ball_intensity
-	set_ball_intensity(10)  # Intensité maximale pendant l'effet
-	
-	# Retour à l'intensité originale après l'effet
-	await get_tree().create_timer(0.4).timeout
-	set_ball_intensity(original_intensity)
-
-# Fonction pour changer la couleur
-func set_ball_color(new_color: Color):
-	ball_color = new_color
-	generate_textures()
-	queue_redraw()
-
-# Fonction pour changer la taille
-func set_ball_size(new_size: float):
-	ball_size = new_size
-	generate_textures()
-	queue_redraw()
-
-# Optionnel: Effet spécial avec paramètres
-func ball_effect_custom(duration: float = 0.4, pulse_scale: float = 1.3, brightness: float = 2.0):
-	var original_scale = scale
-	var original_modulate = modulate
-	var original_intensity = ball_intensity
-	
-	var tween = create_tween()
-	tween.set_parallel(true)
-	
-	# Pulse
-	tween.tween_property(self, "scale", original_scale * pulse_scale, duration * 0.25)
-	tween.tween_property(self, "scale", original_scale, duration * 0.75).set_delay(duration * 0.25)
-	
-	# Luminosité
-	tween.tween_property(self, "modulate", original_modulate * brightness, duration * 0.25)
-	tween.tween_property(self, "modulate", original_modulate, duration * 0.75).set_delay(duration * 0.25)
-	
-	# Halo intensifié
-	set_ball_intensity(10)
-	await get_tree().create_timer(duration).timeout
-	set_ball_intensity(original_intensity)

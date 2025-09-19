@@ -86,47 +86,56 @@ scale = Vector2(0.6029, 0.6029)
 polygon = PackedVector2Array(-123, -209, -119, 195, 137, 207, 127, 130, -70, 150, -59, -147, 57, -148, 61, 151, 131, 149, 119, -208)
 
 [node name="1" type="Polygon2D" parent="Scores"]
+visible = false
 position = Vector2(-2, 0)
 rotation = 1.57079
 scale = Vector2(0.6029, 0.6029)
 polygon = PackedVector2Array(72, 211, 48, -205, 120, -205, 139, 212)
 
 [node name="2" type="Polygon2D" parent="Scores"]
+visible = false
 rotation = 1.57079
 scale = Vector2(0.6029, 0.6029)
 polygon = PackedVector2Array(-115, -154, -115, -197, 118, -196, 116, 22, -64, 22, -70, 165, 130, 163, 127, 204, -109, 206, -104, -15, 83, -19, 83, -153)
 
 [node name="3" type="Polygon2D" parent="Scores"]
+visible = false
 rotation = 1.57079
 scale = Vector2(0.6029, 0.6029)
 polygon = PackedVector2Array(-114, -154, -115, -196, 117, -194, 125, 203, -111, 206, -110, 165, 88, 160, 80, 23, -103, 21, -101, -22, 81, -24, 81, -156)
 
 [node name="4" type="Polygon2D" parent="Scores"]
+visible = false
 rotation = 1.57079
 scale = Vector2(0.6029, 0.6029)
 polygon = PackedVector2Array(-114, -195, -106, 22, 71, 22, 78, 201, 129, 200, 120, -195, 76, -196, 78, -22, -64, -26, -62, -196)
 
 [node name="5" type="Polygon2D" parent="Scores"]
+visible = false
 rotation = 1.57079
 scale = Vector2(0.6029, 0.6029)
 polygon = PackedVector2Array(116, -200, -117, -196, -104, 17, 68, 21, 73, 153, -109, 156, -112, 200, 125, 206, 126, -22, -65, -27, -66, -154, 120, -150)
 
 [node name="6" type="Polygon2D" parent="Scores"]
+visible = false
 rotation = 1.57079
 scale = Vector2(0.6029, 0.6029)
 polygon = PackedVector2Array(-115, -198, -114, 202, 132, 205, 123, -28, -92, -25, -88, 15, 68, 23, 75, 158, -73, 158, -67, -12, -66, -164, 125, -151, 113, -202)
 
 [node name="7" type="Polygon2D" parent="Scores"]
+visible = false
 rotation = 1.57079
 scale = Vector2(0.6029, 0.6029)
 polygon = PackedVector2Array(-121, -204, 119, -204, 132, 206, 70, 206, 76, -148, -118, -151)
 
 [node name="8" type="Polygon2D" parent="Scores"]
+visible = false
 rotation = 1.57079
 scale = Vector2(0.6029, 0.6029)
 polygon = PackedVector2Array(-121, -203, -113, 200, 134, 205, 129, 142, -71, 156, -65, 19, 64, 25, 71, 153, 129, 167, 125, -31, -61, -30, -59, -152, 67, -147, 71, -24, 125, -23, 118, -203)
 
 [node name="9" type="Polygon2D" parent="Scores"]
+visible = false
 rotation = 1.57079
 scale = Vector2(0.6029, 0.6029)
 polygon = PackedVector2Array(-126, -210, -118, 19, 58, 26, 64, 143, -113, 156, -115, 199, 133, 202, 123, -38, -57, -31, -56, -153, 64, -146, 73, -31, 127, -27, 118, -204)

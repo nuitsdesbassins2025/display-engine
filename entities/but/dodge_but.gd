@@ -39,6 +39,9 @@ func reset_ball(body):
 func goal():
 	score += 1
 	print("score : ", score)
+	if score > 9 :
+		score = 0
+		
 	var event_data = {
 		"but_position":position_cote,
 		"but_score":score,
@@ -46,6 +49,9 @@ func goal():
 	}
 	$BallSpawner.ball_explosion( 80, 1000.0)
 	update_score_display()
+	
+	if score > 9 :
+		score = 0
 	#$Scores
 	#$"Scores/0" Polygon2D
 	#$"Scores/1"
