@@ -25,6 +25,8 @@ var viewport_rect: Rect2
 var time_since_direction_change: float = 0.0
 
 
+var scene_reset = true
+
 var lost_control = false
 
 
@@ -36,12 +38,14 @@ func _ready():
 var color_circle : Color = Color(0.941, 0.925, 0.039, 0.7)
 
 func reset_blackhole():
+	scene_reset = true
 	color_circle = Color(0.941, 0.925, 0.039, 0.7)
-	objects_absorbed = 0
+	objects_absorbed = 1
 	current_radius = initial_radius
 	
 	viewport_rect = get_viewport().get_visible_rect()
-	global_position = get_random_position_within_bounds()	
+	print("RESET POSITION ?")
+	global_position = get_random_position_within_bounds()
 	choose_new_movement_parameters()
 	lost_control = false
 	
@@ -76,7 +80,8 @@ func _process(delta):
 			grow_blackhole()
 		global_position = get_viewport().get_visible_rect().size / 2
 	
-	if objects_absorbed > 400 :
+	if objects_absorbed > 400 and scene_reset :
+		scene_reset=false
 		get_tree().create_timer(10.0).timeout.connect(
 			func(): 
 				if get_tree().current_scene.has_method("reset_scene"):

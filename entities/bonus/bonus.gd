@@ -7,8 +7,7 @@ signal bonus_ramasse(joueur_nom, bonus_type)
 
 func _ready():
 	pass
-	# Détection quand un corps entre dans la zone
-	# body_entered.connect(_on_body_entered)
+
 
 func _on_body_entered(body):
 	print("bonus body entered")
