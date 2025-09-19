@@ -178,6 +178,8 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 		if body.client_id != "":
 			print("client_id")
 			
+			T.emit_player_event(body.client_id, "player_ball")
+			
 			var my_data2 = {
 				"event_type": "player_ball",
 				"client_id":body.client_id,

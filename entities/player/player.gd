@@ -390,14 +390,9 @@ func _on_shield_animation_finished():
 
 func _reset_shield_cooldown():
 	can_use_shield = true
-	var my_datas = {
-		"client_id": client_id,
-		"event_type" : "shield_ready",
-		"event_datas":{
-			"shield_ready":true
-			}
-		}
-	NetworkManager.transfer_datas("info",my_datas)
+	if client_id != "":
+		T.emit_player_event(client_id,"shield_ready")
+
 
 
 func _input(event):

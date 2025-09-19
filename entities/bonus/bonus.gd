@@ -15,7 +15,8 @@ func _on_body_entered(body):
 	if body.is_in_group("players"):
 		# Émettre le signal avant de disparaître
 		emit_signal("bonus_ramasse", body.name, bonus_type)
-		
+		if body.client_id != "":
+			T.emit_player_event(body.client_id, "player_bonus")
 		# Appliquer l'effet au joueur
 		_appliquer_effet(body)
 		

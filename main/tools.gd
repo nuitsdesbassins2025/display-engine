@@ -17,3 +17,15 @@ func percentage_to_global_position(percentage: Vector2) -> Vector2:
 		(percentage.y / 100.0) * viewport_size.y
 	)
 	return global_pos
+
+
+func emit_player_event(client_id, event_name:String):
+	var my_datas = {
+	"client_id": client_id,
+	"event_type" : event_name,
+	"event_datas":{
+		event_name:true
+		}
+	}
+	NetworkManager.transfer_datas("info",my_datas)
+	

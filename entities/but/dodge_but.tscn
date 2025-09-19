@@ -77,7 +77,6 @@ shape = SubResource("RectangleShape2D_5j5ho")
 [node name="Scores" type="Node2D" parent="."]
 z_index = 20
 position = Vector2(360, 6)
-rotation = 1.57079
 
 [node name="0" type="Polygon2D" parent="Scores"]
 polygon = PackedVector2Array(-123, -209, -119, 195, 137, 207, 127, 130, -70, 150, -59, -147, 57, -148, 61, 151, 131, 149, 119, -208)
