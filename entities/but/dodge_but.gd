@@ -35,10 +35,14 @@ func _on_body_entered(body: Node2D) -> void:
 func reset_ball(body):
 	body.move_to_center()
 
+func ball_explosion():
+	$BallSpawner.ball_explosion( 80, 1000.0)
+
 
 func goal():
 	score += 1
 	print("score : ", score)
+	ball_explosion()
 	if score > 9 :
 		score = 0
 		
@@ -47,15 +51,11 @@ func goal():
 		"but_score":score,
 		"position":T.global_position_to_percentage(position)
 	}
-	$BallSpawner.ball_explosion( 80, 1000.0)
 	update_score_display()
 	
 	if score > 9 :
 		score = 0
-	#$Scores
-	#$"Scores/0" Polygon2D
-	#$"Scores/1"
-	#...
+
 	
 	var my_data = {"event_type": "but", "event_datas": event_data}
 	NetworkManager.transfer_datas("evenement", my_data)

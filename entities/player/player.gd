@@ -52,7 +52,7 @@ signal player_about_to_delete(player_instance, player_key)
 	
 
 
-@export var shield_cooldown: float = 2.0
+@export var shield_cooldown: float = 1.5
 
 @export_category("Movement")
 @export var move_speed: float = 400.0
@@ -107,7 +107,7 @@ func _setup_player():
 func _setup_inactivity_timer():
 	inactivity_timer = Timer.new()
 	add_child(inactivity_timer)
-	inactivity_timer.wait_time = 5.0
+	inactivity_timer.wait_time = 3.0
 	inactivity_timer.one_shot = false
 	inactivity_timer.timeout.connect(_on_inactivity_timeout)
 	inactivity_timer.start()
@@ -194,7 +194,8 @@ func set_active(active: bool):
 	is_active = active
 	visible = active
 	set_physics_process(active)
-	
+	if client_id != "":
+		$BallSpawner.activated = active
 	# Désactiver toutes les formes de collision
 	for child in get_children():
 		if child is CollisionShape2D or child is CollisionPolygon2D:
@@ -227,8 +228,8 @@ func trigger_shield():
 	push_objects()
 
 
-var influence_radius = 200;
-var push_force = 100000
+var influence_radius = player_scale + 200;
+var push_force = 500000
 
 func push_objects():
 	# Trouver tous les objets dans la zone d'influence
@@ -290,10 +291,15 @@ func _update_appearance():
 
 
 func _register_client_id():
+	
 	print("REGISTER CLIENT ID")
 	$TruckatedCircle.ring_color = Color(1.0, 1.0, 0)
 	is_tracked_player = true	
 	$TruckatedCircle.queue_redraw() 
+	$BallSpawner.activated = true
+	$TruckatedCircle.start_angle=0
+	$TruckatedCircle.display_text=""
+	
 
 func _register_pseudo():
 	print("on met à jour le texte player : ", pseudo)
@@ -304,6 +310,7 @@ func _register_pseudo():
 func _register_color():
 	print("on met à jour la couleur player : ", player_color)
 	$TruckatedCircle.ring_color = player_color
+	$BallSpawner.custom_color=player_color
 	_update_appearance()
 
 func unregister():
@@ -311,6 +318,7 @@ func unregister():
 	$TruckatedCircle.ring_color = base_color
 	client_id = ""
 	pseudo = ""
+	$BallSpawner.activated = false
 	_update_appearance()
 
 # ==============================================================================
@@ -357,7 +365,7 @@ func send_activity_statu(statut:String):
 
 func check_inactivity():
 	var current_time = Time.get_unix_time_from_system()
-	if current_time - last_player_action > 10.0:
+	if current_time - last_player_action > 3.0:
 		consecutive_lost += 1
 		set_active(false)
 		send_activity_statu("lost")

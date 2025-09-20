@@ -4,7 +4,7 @@ extends Node2D
 @export var initial_radius: float = 50.0
 @export var growth_per_object: float = 0.50
 @export var influence_radius: float = 300.0
-@export var attraction_force: float = 200.0
+@export var attraction_force: float = 500.0
 @export var rotation_speed: float = 20.0
 
 # Variables internes
@@ -13,8 +13,8 @@ var objects_absorbed: int = 0
 var ring_data = []  # Stocke les données pour chaque anneau: [radius, color, offset]
 
 
-@export var max_speed: float = 60.0
-@export var min_speed: float = 20.0
+@export var max_speed: float = 90.0
+@export var min_speed: float = 40.0
 @export var object_radius: float = 20.0
 @export var direction_change_interval: float = 1.5
 @export var speed_variation: float = 0.3
@@ -210,9 +210,16 @@ func grow_blackhole():
 	var grow = objects_absorbed * growth_per_object
 	
 	if objects_absorbed > 1000 :
-		grow = 1000 * growth_per_object + (objects_absorbed-1000)*growth_per_object/8
+		grow = 1000 * growth_per_object + (objects_absorbed-1000)* growth_per_object*1.3
+	
+	if lost_control:
+		pass
+	
 	
 	current_radius = initial_radius + grow
+	
+	influence_radius = current_radius+300
+	
 	
 	# Mettre à jour les données des anneaux
 	create_ring_data()

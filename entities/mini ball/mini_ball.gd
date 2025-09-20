@@ -5,9 +5,13 @@ extends RigidBody2D
 @export var collision_threashold: float = 2.0
 @export var lifetime: float = 0.0  # 0 = illimité
 @export var colors: Array[Color] = [
-	Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW, 
-	Color.PURPLE, Color.ORANGE, Color.PINK, Color.CYAN
+	Color("#FFFFFF"), Color("#FF0000"), Color("#00FF00"), Color("#0000FF"),
+	Color("#FFFF00"), Color("#FF00FF"), Color("#00FFFF"), Color("#FF8000"),
+	Color("#8000FF"), Color("#0080FF"), Color("#FF0080"), Color("#008080")
 ]
+
+@export var use_custom_color: bool = false
+@export var color:Color = Color.BLUE
 
 var time_alive: float = 0.0
 signal ball_collision(other_ball: Node, impact_force: float)
@@ -21,6 +25,7 @@ func _ready():
 	randomize_ball()
 	z_index = 50
 	if lifetime > 0:
+		
 		start_lifetime_timer()
 
 
@@ -80,11 +85,16 @@ func respawn_at_random_position():
 
 func randomize_ball():
 	"""Initialise la balle avec des propriétés aléatoires"""
-	var size = randf_range(min_size, max_size)
-	var random_color = colors[randi() % colors.size()]
 	
+	var size = randf_range(min_size, max_size)
 	set_size(size)
-	set_color(random_color)
+	
+	if use_custom_color :
+		set_color(color)
+	else : 
+		var random_color = colors[randi() % colors.size()]
+		set_color(random_color)
+		
 	set_physics_properties(size)
 
 func set_size(size: float):

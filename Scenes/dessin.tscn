@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://baqqiy27gdc7p"]
+[gd_scene load_steps=3 format=3 uid="uid://baqqiy27gdc7p"]
 
 [ext_resource type="Script" uid="uid://cukeyhkj3wugu" path="res://Scenes/dessin.gd" id="1_qo4v2"]
+[ext_resource type="PackedScene" uid="uid://bb201smsjb0ri" path="res://entities/mini ball/ball_spawner.tscn" id="2_sx4uo"]
 
 [node name="Dessin" type="Node2D"]
 script = ExtResource("1_qo4v2")
@@ -26,3 +27,11 @@ layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
 grow_horizontal = 2
+
+[node name="BallSpawner" parent="." instance=ExtResource("2_sx4uo")]
+spawn_interval = 0.1
+max_balls = 30
+ball_lifetime = 5.0
+custom_color_activated = true
+custom_color = Color(0.835294, 0, 0, 1)
+activated = false

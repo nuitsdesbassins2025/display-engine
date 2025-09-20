@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://0ho2cpbjy7gb"]
+[gd_scene load_steps=5 format=3 uid="uid://ccobprknfnokk"]
 
 [ext_resource type="PackedScene" uid="uid://dqsoq5a06qq0h" path="res://entities/player/display/truckatedCircle.tscn" id="1_2eypn"]
 [ext_resource type="Script" uid="uid://djtfirl56qj7d" path="res://entities/mini ball/mini_ball.gd" id="1_titbn"]
@@ -8,6 +8,7 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_n0kcj"]
 
 [node name="MiniBall" type="RigidBody2D" groups=["mini_balls"]]
+z_index = 1
 collision_layer = 32
 collision_mask = 7
 gravity_scale = 0.0

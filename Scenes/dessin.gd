@@ -12,6 +12,9 @@ const FADE_CHECK_INTERVAL: float = 0.1  # Vérifier toutes les 100ms
 var client_trace_data: Dictionary = {}  # {client_id: {main_line: Line2D, glow_lines: Array, segment_timestamps: Array}}
 var fade_check_timer: Timer
 
+var ball_spawner = preload("res://entities/mini ball/ball_spawner.tscn")
+var spawn_timer: Timer
+
 func _ready():
 	# Créer le timer pour vérifier les segments à effacer
 	fade_check_timer = Timer.new()
@@ -22,6 +25,12 @@ func _ready():
 	
 	# Attendre que le NetworkManager soit prêt
 	call_deferred("connect_signal")
+	
+	spawn_timer = Timer.new()
+	spawn_timer.one_shot = true
+	spawn_timer.wait_time = 2.0
+	spawn_timer.timeout.connect(_on_spawn_timer_timeout)
+	add_child(spawn_timer)
 
 func _on_fade_check_timeout():
 	# Vérifier tous les segments de toutes les lignes en continu
@@ -54,7 +63,7 @@ func handle_dessin(client_id: String, datas: Dictionary):
 	
 	match tool:
 		"ball":
-			handle_pailettes(client_id, datas)
+			balls_spawn(client_id, datas)
 		"pencil":
 			handle_trace(client_id, datas)
 		"neon":
@@ -64,6 +73,26 @@ func handle_touch_end(client_id: String):
 	# Terminer la ligne quand l'utilisateur relève le doigt
 	if client_trace_data.has(client_id):
 		complete_line(client_id)
+
+
+func balls_spawn(client_id: String, datas:Dictionary):
+	$BallSpawner.activated = true
+	print(Color(datas.settings.color))
+	$BallSpawner.custom_color = Color(datas.settings.color)
+	
+	var spawn_position = T.percentage_to_global_position(Vector2(datas.x,datas.y))
+	$BallSpawner.position = spawn_position
+	
+	# Reset et démarre le timer
+	if spawn_timer.is_stopped():
+		spawn_timer.start()
+	else:
+		spawn_timer.start() # restart() reset le timer
+
+
+func _on_spawn_timer_timeout():
+	$BallSpawner.activated = false
+
 
 func handle_pailettes(client_id: String, datas: Dictionary):
 	var position = convert_percentage_to_screen(datas.x, datas.y)
@@ -140,7 +169,7 @@ func start_new_line(client_id: String, position: Vector2, timestamp: int, color_
 			glow_line.antialiased = true
 			glow_line.z_index = 10 - i
 			glow_line.add_point(position)
-			
+			glow_line.add_to_group("neons")
 			add_child(glow_line)
 			glow_lines.append(glow_line)
 	

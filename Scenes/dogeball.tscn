@@ -1,12 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://dkusqq8p14qw7"]
+[gd_scene load_steps=7 format=3 uid="uid://dkusqq8p14qw7"]
 
-[ext_resource type="Script" path="res://Scenes/dogeball.gd" id="1_12k6n"]
+[ext_resource type="Script" uid="uid://d0f24a7th5hq3" path="res://Scenes/dogeball.gd" id="1_12k6n"]
 [ext_resource type="PackedScene" uid="uid://dr42r1hkdqa1n" path="res://entities/player/player.tscn" id="2_b65vx"]
-[ext_resource type="PackedScene" uid="uid://c2c8dsu6yunsb" path="res://entities/bonus/BonusSpawner.tscn" id="6_el1um"]
-[ext_resource type="PackedScene" uid="uid://bb201smsjb0ri" path="res://entities/mini ball/ball_spawner.tscn" id="7_w2aae"]
 [ext_resource type="PackedScene" uid="uid://dar88wmy8yjkd" path="res://entities/but/dodge_but.tscn" id="8_hvv0g"]
 [ext_resource type="PackedScene" uid="uid://ca6bpkdvla2aq" path="res://entities/black_hole/black_hole.tscn" id="8_n73id"]
-[ext_resource type="Script" path="res://Scenes/walls.gd" id="8_p36c4"]
+[ext_resource type="Script" uid="uid://bc5du853qtynx" path="res://Scenes/walls.gd" id="8_p36c4"]
 [ext_resource type="PackedScene" uid="uid://baqqiy27gdc7p" path="res://Scenes/dessin.tscn" id="10_n73id"]
 
 [node name="Dogeball" type="Node2D"]
@@ -17,12 +15,6 @@ grid_color = Color(1, 1, 1, 1)
 background_color = Color(0, 0, 0, 1)
 
 [node name="Dessin" parent="." instance=ExtResource("10_n73id")]
-
-[node name="BonusSpawner" parent="." instance=ExtResource("6_el1um")]
-
-[node name="BallSpawner" parent="." groups=["mini balls"] instance=ExtResource("7_w2aae")]
-position = Vector2(632, 310)
-max_balls = 3
 
 [node name="Wall_R" type="StaticBody2D" parent="."]
 visible = false

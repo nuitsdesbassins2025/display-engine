@@ -62,10 +62,8 @@ func _process(delta):
 
 func _on_set_game_settings(settings):
 	print("get the settings in game : ",settings)
-	
 	match settings.action:
 		"grid_toogle":
-			print("on déclenche le grid toogle")
 			toogle_grid()
 		"set_player_scale":
 			set_player_scale(settings.datas)
@@ -75,7 +73,6 @@ func _on_set_game_settings(settings):
 			clear_all_drawings()
 		"toogle_player_text":
 			toogle_player_text()
-
 		"remove_big_balls":
 			remove_big_balls()
 		"spawn_ball":
@@ -84,6 +81,14 @@ func _on_set_game_settings(settings):
 			reset_scene()
 		"hide_players":
 			toggle_players_visibility()
+		"remove_all_blackholes":
+			remove_all_blackholes()
+		"add_blackhole":
+			add_blackhole()
+		"declencher_buts":
+			declencher_buts()
+		"clear_neons":
+			clear_neons()
 
 
 func reset_scene():
@@ -91,8 +96,14 @@ func reset_scene():
 	$Node/DodgeBut.set_score(0)
 	clear_all_balls()
 	clear_all_drawings()
-	$BlackHole.reset_blackhole()
-	
+	remove_all_blackholes()
+	add_blackhole()
+
+
+func declencher_buts():
+	$Node/DodgeBut.ball_explosion()
+	$Node/DodgeBut2.ball_explosion()
+
 
 func toggle_players_visibility():
 	players_visible = !players_visible
@@ -122,15 +133,22 @@ func toogle_player_text():
 		var player = players[player_key]
 		player.debug_position = !player.debug_position
 		player._update_appearance()
-	
 
+# FAIRE UN TRUC QUI CHANGE LA TAILLE SELON LE NOMBRE DE JOUEURS
+var force_scale = false
 func set_player_scale(settings):
-	print("set player scale déclenchée !!")
+	var target_scale = settings.get("scale")
 	player_scale = settings.get("scale")
 	
-	for player_key in players:
-		var player = players[player_key]
-		player.set_player_size(player_scale)
+	if player_scale < 20:
+		force_scale = false
+	else :
+		force_scale = true
+		for player_key in players:
+			var player = players[player_key]
+			player.set_player_size(player_scale)
+
+
 
 
 func get_player_by_key(client_player_key):
@@ -333,7 +351,10 @@ func move_player_to_click():
 
 
 
-func register_key(client_id, key):
+func register_key(client_id, datas):
+	
+	var key = datas.tracking_code
+	
 	var player_by_key = get_player_by_key(key)
 	var my_datas = {
 		"client_id": client_id,
@@ -346,6 +367,9 @@ func register_key(client_id, key):
 		
 	if player_by_key :
 		player_by_key.client_id = client_id
+		print(datas)
+		if(datas.color !=null):
+			player_by_key.player_color = Color(datas.color)
 		my_datas["event_datas"]["tracking_status"] = "valid"
 
 	else :
@@ -390,6 +414,24 @@ func clear_all_drawings():
 	for drawing in drawings:
 		drawing.queue_free()
 
+func clear_neons():
+	var neons = get_tree().get_nodes_in_group("neons")
+	for drawing in neons:
+		drawing.queue_free()
+
+
+func add_blackhole():
+	var blackhole_scene = preload("res://entities/black_hole/black_hole.tscn")
+	var blackhole = blackhole_scene.instantiate()
+	get_tree().current_scene.add_child(blackhole)
+
+	
+func remove_all_blackholes():
+	var blackholes = get_tree().get_nodes_in_group("blackholes")
+	for blackhole in blackholes:
+		if is_instance_valid(blackhole):
+			blackhole.queue_free()
+
 func _input(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT :
 		move_player_to_click()
@@ -400,7 +442,7 @@ func _input(event):
 	if event is InputEventKey and event.pressed:
 		match event.keycode:
 			KEY_A:
-				print("trigger_shield")
+				#print("trigger_shield")
 			#	trigger_shield()
 				pass
 			KEY_Z:

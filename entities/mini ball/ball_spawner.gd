@@ -4,6 +4,11 @@ extends Node2D
 @export var spawn_interval: float = 1.0  # Secondes entre chaque spawn
 @export var max_balls: int = 20
 @export var spawn_radius: float = 50.0
+@export var ball_lifetime: float = 0.0
+@export var custom_color_activated:bool = false
+@export var custom_color: Color
+@export var activated:bool = true
+
 
 var current_balls: int = 0
 
@@ -18,16 +23,26 @@ func _ready():
 func start_spawning():
 	while true:
 		
-		if current_balls < max_balls:
-			spawn_ball()
+		if activated :
 			
+			if current_balls < max_balls:
+				spawn_ball()
+				
 		await get_tree().create_timer(spawn_interval).timeout
 
 
 
 func spawn_ball():
 	var ball_instance = ball_scene.instantiate()
-	add_child(ball_instance)
+	ball_instance.lifetime = ball_lifetime
+	if custom_color_activated:
+		ball_instance.use_custom_color = true
+		ball_instance.color = custom_color
+	
+	get_tree().current_scene.add_child(ball_instance)
+	ball_instance.z_index = 1
+	
+	
 	
 	# Position aléatoire autour du spawner
 	var random_angle = randf() * TAU

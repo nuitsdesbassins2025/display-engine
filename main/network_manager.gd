@@ -198,7 +198,7 @@ func handle_client_datas(datas):
 					game_scene.set_player_color(client_id, client_datas[key])
 			"tracking_code":
 				if game_scene and game_scene.has_method("register_key"):
-					game_scene.register_key(client_id, client_datas[key])
+					game_scene.register_key(client_id, client_datas)
 
 
 

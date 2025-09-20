@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dy8xf8sbuolu8" path="res://entities/black_hole/black_hole.gd" id="1_yt7qt"]
 [ext_resource type="Script" uid="uid://uo7ekc34dve2" path="res://entities/black_hole/black_circle.gd" id="2_ytr03"]
 
-[node name="BlackHole" type="Node2D"]
+[node name="BlackHole" type="Node2D" groups=["blackholes"]]
 z_index = 20
 script = ExtResource("1_yt7qt")
 
